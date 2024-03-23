@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
 {
-    public class Payment
+    public class Paycard
     {
         public int Id { get; set; }
         public int Number { get; set; }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
 {
+    public enum Status { Active , Inactive}
+    public enum Gender { Male , Female , PreferNotToSay}
     public class Doctor
     {
         public int Id { get; set; }
@@ -15,10 +17,18 @@ namespace Clinic.Core.Models
         public string Address { get; set; }
         public int NationalID { get; set; }
         public string Phone { get; set; }
-        public int Gender {  get; set; }
+        public Gender Gender {  get; set; }
         public DateTime DOB { get; set; }
         public int AppointmentPrice { get; set; }
-        public int Status { get; set; }
+        public Status Status { get; set; }
+        public int SpecialityID { get; set; }
+        public int ScheduleID { get; set; }
+
+        public virtual Speciality Speciality { get; set; }
+        public virtual Schedule Schedule { get; set; }
+        public virtual IEnumerable<Review> Reviews { get; set; }
+        public virtual IEnumerable<Appointement> Appointements { get; set; }
+
 
     }
 }

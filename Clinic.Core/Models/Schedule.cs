@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
 {
-    public class Avaliable
+    public class Schedule
     {
         public int Id { get; set; }
         public string Saturday { get; set; }

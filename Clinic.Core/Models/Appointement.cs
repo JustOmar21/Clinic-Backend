@@ -13,5 +13,9 @@ namespace Clinic.Core.Models
         public int Order { get; set; }
         public int Status { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int DoctorID { get; set; }
+        public int PatientID { get; set; }
+        public virtual Patient Patient { get; set; }
+        public virtual Doctor Doctor { get; set; }
     }
 }

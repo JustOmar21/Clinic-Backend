@@ -11,6 +11,10 @@ namespace Clinic.Core.Models
         public int Id { get; set; }
         public string Notes { get; set; }
         public int Score { get; set; }
+        public int DoctorID { get; set; }
+        public int PatientID { get; set; }
+        public virtual Doctor Doctor { get; set; }
+        public virtual Patient Patient { get; set; }
 
     }
 }
