@@ -56,7 +56,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("Date", "Order");
 
-                    b.ToTable("Appointements");
+                    b.ToTable("Appointements", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Doctor", b =>
@@ -117,7 +117,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("SpecialityID");
 
-                    b.ToTable("Doctors");
+                    b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Patient", b =>
@@ -159,7 +159,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("PaycardID");
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Paycard", b =>
@@ -183,7 +183,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Paycard");
+                    b.ToTable("Paycard", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Review", b =>
@@ -213,7 +213,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("PatientID");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Schedule", b =>
@@ -254,7 +254,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schedule");
+                    b.ToTable("Schedule", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Speciality", b =>
@@ -271,7 +271,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Speciality");
+                    b.ToTable("Speciality", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.confirmEmail", b =>
@@ -292,7 +292,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ConfirmEmail");
+                    b.ToTable("ConfirmEmail", (string)null);
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Appointement", b =>

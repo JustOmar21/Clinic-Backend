@@ -116,14 +116,24 @@ namespace Clinic.Infrastructure.RepoImplemention
             Doctor? findDoc = context.Doctors.Find(DoctorID);
             if(findDoc != null)
             {
-                if(date != null)
+                List<Appointement> apps;
+                List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
+                if (date != null)
                 {
-                    return context.Appointements.Where(app=> app.Date.Date == date.Value.Date && app.DoctorID == DoctorID).ToList();
+                    apps = context.Appointements.Where(app=> app.Date.Date == date.Value.Date && app.DoctorID == DoctorID).ToList();
                 }
                 else
                 {
-                    return context.Appointements.Where(app => app.DoctorID == DoctorID).ToList();
+                    apps = context.Appointements.Where(app => app.DoctorID == DoctorID).ToList();
                 }
+                foreach(Appointement app in apps)
+                {
+                    SinglePatientAppointment singleApp = new SinglePatientAppointment();
+                    singleApp.Patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID);
+                    singleApp.Appointement = app;
+                    patientApps.Add(singleApp);
+                }
+                return patientApps;
             }
             else
             {
@@ -131,17 +141,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             }
         }
 
-        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1, int pageSize = 10, string Location = "")
+        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1, int pageSize = 10, string Location = "", int specialityID = -1, string email = "")
         {
-            List<Doctor> doctors = Location == ""
-                ?
-                context.Doctors
-                .Skip((pageSize - 1) * pageNumber)
-                .Take(pageSize)
-                .ToList()
-                :
-                context.Doctors
-                .Where(doc => doc.Governance == Location)
+            List<Doctor> doctors = context.Doctors.ToList();
+            if (Location != "") doctors = doctors.Where(doc => doc.Governance == Location).ToList();
+            if (specialityID != -1) doctors = doctors.Where(doc => doc.SpecialityID == specialityID).ToList();
+            doctors =
+                doctors
+                .Where(doc=> doc.Email.Contains(email))
                 .Skip((pageSize - 1) * pageNumber)
                 .Take(pageSize)
                 .ToList();
@@ -167,6 +174,24 @@ namespace Clinic.Infrastructure.RepoImplemention
             doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
             doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
             return doctorDetails;
+        }
+
+        public int GetDoctorsCount()
+        {
+            return context.Doctors.Count();
+        }
+
+        public dynamic GetPatientAppointements(int DoctorID, int PatientID)
+        {
+            Doctor? doc = context.Doctors.SingleOrDefault(doc=>doc.Id ==  DoctorID);
+            Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == PatientID);
+            string message = "";
+            if (doc == null || patient == null) return HttpStatusCode.NotFound;
+            List<Appointement> app = context.Appointements.Where(app=>app.DoctorID==DoctorID&&app.PatientID==PatientID).ToList();
+            PatientAppointments patientApps = new PatientAppointments();
+            patientApps.Patient = patient;
+            patientApps.Appointements = app;
+            return patientApps;
         }
     }
 }

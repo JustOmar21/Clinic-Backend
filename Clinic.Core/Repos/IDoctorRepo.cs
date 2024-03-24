@@ -11,9 +11,11 @@ namespace Clinic.Core.Repos
 {
     public interface IDoctorRepo
     {
-        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1,int pageSize = 10 ,string Location = "");
+        public int GetDoctorsCount();
+        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
         public dynamic GetDoctor(int id);
         public dynamic GetAllAppointements(int DoctorID, DateTime? date = null);
+        public dynamic GetPatientAppointements(int DoctorID, int PatientID);
         public HttpStatusCode AddDoctor(Doctor doctor);
         public HttpStatusCode EditDoctor(Doctor doctor);
         public HttpStatusCode DeleteDoctor(int id);
