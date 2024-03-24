@@ -19,5 +19,12 @@ namespace Clinic.Core.Repos
         public HttpStatusCode EditPatient(Patient patient);
         public HttpStatusCode DeletePatient(int id);
         public HttpStatusCode AddAppointment(Appointement app);
+        public HttpStatusCode AddCard(Paycard card);
+        public HttpStatusCode EditCard(Paycard card);
+        public HttpStatusCode DeleteCard(int cardID);
+        public HttpStatusCode AddReview(Review review);
+        public HttpStatusCode EditReview(Review review);
+        public HttpStatusCode DeleteReview(int reviewID);
+
     }
 }

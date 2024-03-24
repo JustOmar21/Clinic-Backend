@@ -29,11 +29,45 @@ namespace Clinic.Infrastructure.RepoImplemention
             else { return HttpStatusCode.BadRequest; }
         }
 
+        public HttpStatusCode AddCard(Paycard card)
+        {
+            if(card != null)
+            {
+                context.Paycard.Add(card);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
         public HttpStatusCode AddPatient(Patient patient)
         {
             if(patient != null)
             {
                 context.Patients.Add(patient);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
+        public HttpStatusCode AddReview(Review review)
+        {
+            if(review != null)
+            {
+                context.Reviews.Add(review);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
+        public HttpStatusCode DeleteCard(int cardID)
+        {
+            Paycard? card = context.Paycard.SingleOrDefault(paycard=>paycard.Id == cardID);
+            if (card != null)
+            {
+                context.Paycard.Remove(card);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
@@ -52,11 +86,45 @@ namespace Clinic.Infrastructure.RepoImplemention
             else { return HttpStatusCode.BadRequest; }
         }
 
+        public HttpStatusCode DeleteReview(int reviewID)
+        {
+            Review? review = context.Reviews.SingleOrDefault(rev=>rev.Id == reviewID);
+            if (review != null)
+            {
+                context.Reviews.Remove(review);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
+        public HttpStatusCode EditCard(Paycard card)
+        {
+            if (card != null)
+            {
+                context.Paycard.Update(card);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
         public HttpStatusCode EditPatient(Patient patient)
         {
             if (patient != null)
             {
                 context.Patients.Update(patient);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else { return HttpStatusCode.BadRequest; }
+        }
+
+        public HttpStatusCode EditReview(Review review)
+        {
+            if (review != null)
+            {
+                context.Reviews.Update(review);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }

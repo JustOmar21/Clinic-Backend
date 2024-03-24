@@ -22,5 +22,8 @@ namespace Clinic.Core.Repos
         public HttpStatusCode ConfirmAppointment(int AppID);
         public HttpStatusCode CancalAppointment(int AppID);
         public HttpStatusCode RejectAppointment(int AppID);
+        public HttpStatusCode AddSchedule(Schedule schedule);
+        public HttpStatusCode EditSchedule(Schedule schedule);
+        public int GetCurrentOrder(DateTime date);
     }
 }

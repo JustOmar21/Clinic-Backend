@@ -157,8 +157,8 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 SingleDoctorDetails doctorDetails = new SingleDoctorDetails();
                 doctorDetails.Doctor = doc;
-                doctorDetails.Schedule = context.Schedule.SingleOrDefault(doc => doc.Id == doctorDetails.Doctor.ScheduleID);
-                doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
+                doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doc.Id);
+                doctorDetails.Speciality = context.Speciality.SingleOrDefault(spy => spy.ID == doctorDetails.Doctor.SpecialityID);
                 doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == doc.Id).ToList();
                 docsFullDetails.Add(doctorDetails);
             }
@@ -170,7 +170,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             SingleDoctorDetails doctorDetails = new SingleDoctorDetails();
             doctorDetails.Doctor = context.Doctors.SingleOrDefault(doc => doc.Id == id);
             if(doctorDetails.Doctor == null) { return HttpStatusCode.NotFound; }
-            doctorDetails.Schedule = context.Schedule.SingleOrDefault(doc => doc.Id == doctorDetails.Doctor.ScheduleID);
+            doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doctorDetails.Doctor.Id);
             doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
             doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
             return doctorDetails;
@@ -185,13 +185,39 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             Doctor? doc = context.Doctors.SingleOrDefault(doc=>doc.Id ==  DoctorID);
             Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == PatientID);
-            string message = "";
             if (doc == null || patient == null) return HttpStatusCode.NotFound;
             List<Appointement> app = context.Appointements.Where(app=>app.DoctorID==DoctorID&&app.PatientID==PatientID).ToList();
             PatientAppointments patientApps = new PatientAppointments();
             patientApps.Patient = patient;
             patientApps.Appointements = app;
             return patientApps;
+        }
+
+        public HttpStatusCode AddSchedule(Schedule schedule)
+        {
+            if(schedule != null)
+            {
+                context.Schedule.Add(schedule);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else return HttpStatusCode.BadRequest;
+        }
+
+        public HttpStatusCode EditSchedule(Schedule schedule)
+        {
+            if (schedule != null)
+            {
+                context.Schedule.Update(schedule);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else return HttpStatusCode.BadRequest;
+        }
+
+        public int GetCurrentOrder(DateTime date)
+        {
+            return context.Appointements.Where(app=>app.Date.Date == date.Date).Count();
         }
     }
 }
