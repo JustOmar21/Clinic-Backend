@@ -1,4 +1,6 @@
+using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
+using Clinic.Infrastructure.RepoImplemention;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,7 @@ namespace Clinic.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             ///////////////////////////////
+            builder.Services.AddTransient<IDoctorRepo, DoctorRepo>();
             builder.Services.AddDbContext<ClinicDBContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("connect"));

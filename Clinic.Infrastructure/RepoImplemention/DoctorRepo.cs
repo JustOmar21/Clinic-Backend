@@ -1,0 +1,172 @@
+﻿using Clinic.Core.DTO;
+using Clinic.Core.Models;
+using Clinic.Core.Repos;
+using Clinic.Infrastructure.DBContext;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Clinic.Infrastructure.RepoImplemention
+{
+
+    public class DoctorRepo : IDoctorRepo
+    {
+        private readonly ClinicDBContext context;
+        public DoctorRepo(ClinicDBContext context)
+        {
+            this.context = context;
+        }
+        public HttpStatusCode AddDoctor(Doctor doctor)
+        {
+
+            if(doctor != null)
+            {
+                context.Doctors.Add(doctor);
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.BadRequest;
+            }
+            return HttpStatusCode.NoContent;
+            
+        }
+        public HttpStatusCode DeleteDoctor(int id)
+        {
+            Doctor? findDoc = context.Doctors.Find(id);
+            if(findDoc != null)
+            {
+                context.Doctors.Remove(findDoc);
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+
+        public HttpStatusCode EditDoctor(Doctor doctor)
+        {
+            Doctor? findDoc = context.Doctors.Find(doctor.Id);
+            if (findDoc != null)
+            {
+                context.Doctors.Update(findDoc);
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+
+        public HttpStatusCode CancalAppointment(int AppID)
+        {
+            Appointement? findApp = context.Appointements.Find(AppID);
+            if (findApp != null)
+            {
+                findApp.Status = AppStatus.Cancaled;
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+
+        public HttpStatusCode ConfirmAppointment(int AppID)
+        {
+            Appointement? findApp = context.Appointements.Find(AppID);
+            if (findApp != null)
+            {
+                findApp.Status = AppStatus.Accepted;
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+        public HttpStatusCode RejectAppointment(int AppID)
+        {
+            Appointement? findApp = context.Appointements.Find(AppID);
+            if (findApp != null)
+            {
+                findApp.Status = AppStatus.Rejected;
+                context.SaveChanges();
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+
+
+        public dynamic GetAllAppointements(int DoctorID, DateTime? date = null)
+        {
+            Doctor? findDoc = context.Doctors.Find(DoctorID);
+            if(findDoc != null)
+            {
+                if(date != null)
+                {
+                    return context.Appointements.Where(app=> app.Date.Date == date.Value.Date && app.DoctorID == DoctorID).ToList();
+                }
+                else
+                {
+                    return context.Appointements.Where(app => app.DoctorID == DoctorID).ToList();
+                }
+            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+        }
+
+        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1, int pageSize = 10, string Location = "")
+        {
+            List<Doctor> doctors = Location == ""
+                ?
+                context.Doctors
+                .Skip((pageSize - 1) * pageNumber)
+                .Take(pageSize)
+                .ToList()
+                :
+                context.Doctors
+                .Where(doc => doc.Governance == Location)
+                .Skip((pageSize - 1) * pageNumber)
+                .Take(pageSize)
+                .ToList();
+            List<SingleDoctorDetails> docsFullDetails = new List<SingleDoctorDetails> ();
+            foreach(Doctor doc in doctors)
+            {
+                SingleDoctorDetails doctorDetails = new SingleDoctorDetails();
+                doctorDetails.Doctor = doc;
+                doctorDetails.Schedule = context.Schedule.SingleOrDefault(doc => doc.Id == doctorDetails.Doctor.ScheduleID);
+                doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
+                doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == doc.Id).ToList();
+                docsFullDetails.Add(doctorDetails);
+            }
+            return docsFullDetails;
+        }
+
+        public dynamic GetDoctor(int id)
+        {
+            SingleDoctorDetails doctorDetails = new SingleDoctorDetails();
+            doctorDetails.Doctor = context.Doctors.SingleOrDefault(doc => doc.Id == id);
+            if(doctorDetails.Doctor == null) { return HttpStatusCode.NotFound; }
+            doctorDetails.Schedule = context.Schedule.SingleOrDefault(doc => doc.Id == doctorDetails.Doctor.ScheduleID);
+            doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
+            doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
+            return doctorDetails;
+        }
+    }
+}
