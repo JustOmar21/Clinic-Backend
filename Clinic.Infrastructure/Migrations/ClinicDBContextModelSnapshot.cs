@@ -56,7 +56,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("Date", "Order");
 
-                    b.ToTable("Appointements", (string)null);
+                    b.ToTable("Appointements");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Doctor", b =>
@@ -99,9 +99,6 @@ namespace Clinic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ScheduleID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("SpecialityID")
                         .HasColumnType("int");
 
@@ -113,11 +110,9 @@ namespace Clinic.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("ScheduleID");
-
                     b.HasIndex("SpecialityID");
 
-                    b.ToTable("Doctors", (string)null);
+                    b.ToTable("Doctors");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Patient", b =>
@@ -142,9 +137,6 @@ namespace Clinic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaycardID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -157,9 +149,7 @@ namespace Clinic.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("PaycardID");
-
-                    b.ToTable("Patients", (string)null);
+                    b.ToTable("Patients");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Paycard", b =>
@@ -181,9 +171,14 @@ namespace Clinic.Infrastructure.Migrations
                     b.Property<int>("Number")
                         .HasColumnType("int");
 
+                    b.Property<int>("PatientID")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Paycard", (string)null);
+                    b.HasIndex("PatientID");
+
+                    b.ToTable("Paycard");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Review", b =>
@@ -213,7 +208,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("PatientID");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Schedule", b =>
@@ -223,6 +218,9 @@ namespace Clinic.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DoctorID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Friday")
                         .IsRequired()
@@ -254,7 +252,9 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schedule", (string)null);
+                    b.HasIndex("DoctorID");
+
+                    b.ToTable("Schedule");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Speciality", b =>
@@ -271,7 +271,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Speciality", (string)null);
+                    b.ToTable("Speciality");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.confirmEmail", b =>
@@ -292,7 +292,7 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ConfirmEmail", (string)null);
+                    b.ToTable("ConfirmEmail");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Appointement", b =>
@@ -316,26 +316,22 @@ namespace Clinic.Infrastructure.Migrations
 
             modelBuilder.Entity("Clinic.Core.Models.Doctor", b =>
                 {
-                    b.HasOne("Clinic.Core.Models.Schedule", "Schedule")
-                        .WithMany()
-                        .HasForeignKey("ScheduleID");
-
                     b.HasOne("Clinic.Core.Models.Speciality", "Speciality")
                         .WithMany("Doctors")
                         .HasForeignKey("SpecialityID");
 
-                    b.Navigation("Schedule");
-
                     b.Navigation("Speciality");
                 });
 
-            modelBuilder.Entity("Clinic.Core.Models.Patient", b =>
+            modelBuilder.Entity("Clinic.Core.Models.Paycard", b =>
                 {
-                    b.HasOne("Clinic.Core.Models.Paycard", "Paycard")
+                    b.HasOne("Clinic.Core.Models.Patient", "Patient")
                         .WithMany()
-                        .HasForeignKey("PaycardID");
+                        .HasForeignKey("PatientID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Paycard");
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Review", b =>
@@ -355,6 +351,17 @@ namespace Clinic.Infrastructure.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("Clinic.Core.Models.Schedule", b =>
+                {
+                    b.HasOne("Clinic.Core.Models.Doctor", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Doctor", b =>

@@ -22,10 +22,8 @@ namespace Clinic.Core.Models
         public int AppointmentPrice { get; set; }
         public Status Status { get; set; }
         public int? SpecialityID { get; set; }
-        public int? ScheduleID { get; set; }
 
         public virtual Speciality? Speciality { get; set; }
-        public virtual Schedule? Schedule { get; set; }
         public virtual IEnumerable<Review>? Reviews { get; set; }
         public virtual IEnumerable<Appointement>? Appointements { get; set; }
 

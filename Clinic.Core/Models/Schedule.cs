@@ -16,5 +16,7 @@ namespace Clinic.Core.Models
         public string Wednesday { get; set;}
         public string Thursday { get; set;}
         public string Friday { get; set;}
+        public int DoctorID { get; set; }
+        public virtual Doctor Doctor { get; set; }
     }
 }

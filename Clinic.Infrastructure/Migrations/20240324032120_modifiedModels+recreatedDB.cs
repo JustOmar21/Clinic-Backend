@@ -6,43 +6,41 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Clinic.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalDatabase : Migration
+    public partial class modifiedModelsrecreatedDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Paycard",
+                name: "ConfirmEmail",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Number = table.Column<int>(type: "int", nullable: false),
-                    ExpirationDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CCV = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    keypass = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Paycard", x => x.Id);
+                    table.PrimaryKey("PK_ConfirmEmail", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Schedule",
+                name: "Patients",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Saturday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Sunday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Monday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Tuesday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Wednesday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Thursday = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Friday = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Schedule", x => x.Id);
+                    table.PrimaryKey("PK_Patients", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,27 +57,23 @@ namespace Clinic.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Patients",
+                name: "Paycard",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ScheduleID = table.Column<int>(type: "int", nullable: false),
-                    PaycardID = table.Column<int>(type: "int", nullable: false)
+                    Number = table.Column<int>(type: "int", nullable: false),
+                    ExpirationDate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CCV = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PatientID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Patients", x => x.Id);
+                    table.PrimaryKey("PK_Paycard", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Patients_Paycard_PaycardID",
-                        column: x => x.PaycardID,
-                        principalTable: "Paycard",
+                        name: "FK_Paycard_Patients_PatientID",
+                        column: x => x.PatientID,
+                        principalTable: "Patients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -100,24 +94,16 @@ namespace Clinic.Infrastructure.Migrations
                     DOB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AppointmentPrice = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    SpecialityID = table.Column<int>(type: "int", nullable: false),
-                    ScheduleID = table.Column<int>(type: "int", nullable: false)
+                    SpecialityID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Doctors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Doctors_Schedule_ScheduleID",
-                        column: x => x.ScheduleID,
-                        principalTable: "Schedule",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Doctors_Speciality_SpecialityID",
                         column: x => x.SpecialityID,
                         principalTable: "Speciality",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -178,6 +164,32 @@ namespace Clinic.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Schedule",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Saturday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sunday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Monday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tuesday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Wednesday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Thursday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Friday = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DoctorID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedule", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schedule_Doctors_DoctorID",
+                        column: x => x.DoctorID,
+                        principalTable: "Doctors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Appointements_Date_Order",
                 table: "Appointements",
@@ -200,11 +212,6 @@ namespace Clinic.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Doctors_ScheduleID",
-                table: "Doctors",
-                column: "ScheduleID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Doctors_SpecialityID",
                 table: "Doctors",
                 column: "SpecialityID");
@@ -216,9 +223,9 @@ namespace Clinic.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Patients_PaycardID",
-                table: "Patients",
-                column: "PaycardID");
+                name: "IX_Paycard_PatientID",
+                table: "Paycard",
+                column: "PatientID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_DoctorID",
@@ -229,6 +236,11 @@ namespace Clinic.Infrastructure.Migrations
                 name: "IX_Reviews_PatientID",
                 table: "Reviews",
                 column: "PatientID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedule_DoctorID",
+                table: "Schedule",
+                column: "DoctorID");
         }
 
         /// <inheritdoc />
@@ -238,22 +250,25 @@ namespace Clinic.Infrastructure.Migrations
                 name: "Appointements");
 
             migrationBuilder.DropTable(
+                name: "ConfirmEmail");
+
+            migrationBuilder.DropTable(
+                name: "Paycard");
+
+            migrationBuilder.DropTable(
                 name: "Reviews");
-
-            migrationBuilder.DropTable(
-                name: "Doctors");
-
-            migrationBuilder.DropTable(
-                name: "Patients");
 
             migrationBuilder.DropTable(
                 name: "Schedule");
 
             migrationBuilder.DropTable(
-                name: "Speciality");
+                name: "Patients");
 
             migrationBuilder.DropTable(
-                name: "Paycard");
+                name: "Doctors");
+
+            migrationBuilder.DropTable(
+                name: "Speciality");
         }
     }
 }

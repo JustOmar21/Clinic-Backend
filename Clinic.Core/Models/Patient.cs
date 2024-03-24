@@ -15,8 +15,6 @@ namespace Clinic.Core.Models
         public Gender Gender { get; set; }
         public DateTime DOB { get; set; }
         public Status Status { get; set; }
-        public int? PaycardID { get; set; }
-        public virtual Paycard? Paycard { get; set; }
         public virtual IEnumerable<Review>? Reviews { get; set; }
         public virtual IEnumerable<Appointement>? Appointements { get; set; }
     }

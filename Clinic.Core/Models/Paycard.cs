@@ -12,6 +12,8 @@ namespace Clinic.Core.Models
         public int Number { get; set; }
         public string ExpirationDate { get; set; }
         public string CCV { get; set; }
+        public int PatientID { get; set; }
+        public virtual Patient Patient { get; set; }
 
     }
 }
