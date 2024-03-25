@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Clinic.Core\Clinic.Core.csproj" />
+    <ProjectReference Include="..\Utilites\Utilites.csproj" />
   </ItemGroup>
 
 </Project>

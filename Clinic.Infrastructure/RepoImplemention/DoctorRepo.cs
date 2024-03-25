@@ -10,6 +10,7 @@ using System.Net;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Utilites;
 
 namespace Clinic.Infrastructure.RepoImplemention
 {
@@ -68,11 +69,12 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public HttpStatusCode CancalAppointment(int AppID)
         {
-            Appointement? findApp = context.Appointements.Find(AppID);
+            Appointement? findApp = context.Appointements.Include(app => app.Patient).SingleOrDefault(app=>app.Id == AppID);
             if (findApp != null)
             {
                 findApp.Status = AppStatus.Cancaled;
                 context.SaveChanges();
+                EmailSender.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\n We regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
@@ -83,11 +85,12 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public HttpStatusCode ConfirmAppointment(int AppID)
         {
-            Appointement? findApp = context.Appointements.Find(AppID);
+            Appointement? findApp = context.Appointements.Include(app => app.Patient).Include(app => app.Doctor).SingleOrDefault(app => app.Id == AppID);
             if (findApp != null)
             {
                 findApp.Status = AppStatus.Accepted;
                 context.SaveChanges();
+                EmailSender.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\n We would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
             }
             else
             {
@@ -97,11 +100,12 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public HttpStatusCode RejectAppointment(int AppID)
         {
-            Appointement? findApp = context.Appointements.Find(AppID);
+            Appointement? findApp = context.Appointements.Include(app => app.Patient).SingleOrDefault(app => app.Id == AppID);
             if (findApp != null)
             {
                 findApp.Status = AppStatus.Rejected;
                 context.SaveChanges();
+                EmailSender.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\n We regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
