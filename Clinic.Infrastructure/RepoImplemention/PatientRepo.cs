@@ -2,12 +2,14 @@
 using Clinic.Core.Models;
 using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Utilites;
 
 namespace Clinic.Infrastructure.RepoImplemention
 {
@@ -20,6 +22,7 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public HttpStatusCode AddAppointment(Appointement app)
         {
+
             if(app != null)
             {
                 context.Appointements.Add(app);
@@ -28,6 +31,20 @@ namespace Clinic.Infrastructure.RepoImplemention
             }
             else { return HttpStatusCode.BadRequest; }
         }
+        public HttpStatusCode CancelAppointment(int AppID)
+        {
+            Appointement? findApp = context.Appointements.SingleOrDefault(app => app.Id == AppID);
+            if (findApp != null)
+            {
+                findApp.Status = AppStatus.Cancaled;
+                context.SaveChanges();            }
+            else
+            {
+                return HttpStatusCode.NotFound;
+            }
+            return HttpStatusCode.NoContent;
+        }
+
 
         public HttpStatusCode AddCard(Paycard card)
         {
