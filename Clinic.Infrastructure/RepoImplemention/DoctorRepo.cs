@@ -74,7 +74,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 findApp.Status = AppStatus.Cancaled;
                 context.SaveChanges();
-                EmailSender.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\n We regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
+                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
@@ -90,7 +90,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 findApp.Status = AppStatus.Accepted;
                 context.SaveChanges();
-                EmailSender.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\n We would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
+                EmailUtilities.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\nWe would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
             }
             else
             {
@@ -105,7 +105,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 findApp.Status = AppStatus.Rejected;
                 context.SaveChanges();
-                EmailSender.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\n We regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
+                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {

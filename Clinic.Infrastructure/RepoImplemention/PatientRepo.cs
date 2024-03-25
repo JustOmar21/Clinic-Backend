@@ -13,7 +13,7 @@ using Utilites;
 
 namespace Clinic.Infrastructure.RepoImplemention
 {
-    internal class PatientRepo : IPatientRepo
+    public class PatientRepo : IPatientRepo
     {
         private readonly ClinicDBContext context;
         public PatientRepo(ClinicDBContext context)

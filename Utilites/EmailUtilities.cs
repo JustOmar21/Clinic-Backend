@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Utilites
 {
-    public static class EmailSender
+    public static class EmailUtilities
     {
         public static void SendEmail(string subject, string body)
         {
@@ -28,6 +28,18 @@ namespace Utilites
                 Console.WriteLine($"Error sending email: {ex.Message}");
                 Console.WriteLine(HttpStatusCode.InternalServerError);
             }
+        }
+        public static string GenerateKeypass(int size)
+        {
+            Random rand = new Random();
+
+            string Alphabet = "abcdefghijklmnopqrstuvwyxzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            char[] chars = new char[size];
+            for (int i = 0; i < size; i++)
+            {
+                chars[i] = Alphabet[rand.Next(Alphabet.Length)];
+            }
+            return new string(chars);
         }
     }
 }
