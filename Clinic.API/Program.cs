@@ -20,6 +20,8 @@ namespace Clinic.API
             builder.Services.AddSwaggerGen();
             ///////////////////////////////
             builder.Services.AddTransient<IDoctorRepo, DoctorRepo>();
+            builder.Services.AddTransient<IPatientRepo, PatientRepo>();
+            builder.Services.AddTransient<IAdminRepo, AdminRepo>();
             builder.Services.AddDbContext<ClinicDBContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("connect"));
