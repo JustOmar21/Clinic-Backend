@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clinic.Core.DTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -9,10 +10,10 @@ namespace Clinic.Core.Repos
 {
     public interface IAdminRepo
     {
-        public HttpStatusCode ActivateAccount(int accountID, string accountType);
-        public HttpStatusCode DeactivateAccount(int accountID, string accountType);
-        public HttpStatusCode BanAccount(int accountID, string accountType);
-        public HttpStatusCode ConfirmationRequest(int accountID, string accountType);
-        public dynamic GetKeypass(int accountID, string accountType);
+        public HttpStatusCode ActivateAccount(AccountStatus account);
+        public HttpStatusCode DeactivateAccount(AccountStatus account);
+        public HttpStatusCode BanAccount(AccountStatus account);
+        public HttpStatusCode ConfirmationRequest(AccountStatus account);
+        public dynamic GetKeypass(AccountStatus account);
     }
 }
