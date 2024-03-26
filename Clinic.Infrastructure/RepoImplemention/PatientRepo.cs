@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Utilites;
@@ -22,27 +23,32 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public HttpStatusCode AddAppointment(Appointement app)
         {
-
-            if(app != null)
-            {
-                context.Appointements.Add(app);
-                context.SaveChanges();
-                return HttpStatusCode.NoContent;
-            }
-            else { return HttpStatusCode.BadRequest; }
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == app.DoctorID);
+            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {app.DoctorID} does not exist"); }
+            Patient? patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID);
+            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {app.PatientID} does not exist"); }
+            context.Appointements.Add(app);
+            context.SaveChanges();
+            string gender = patient.Gender == Gender.PreferNotToSay ? "" : (patient.Gender == Gender.Male ? "Mr." : "Mrs.");
+            EmailUtilities.SendEmail("Appointment Requested", $"Dear {doc.Name}\nWe would like to inform you that {gender}{patient.Name} requested an appointment to be scheduled on {app.Date.Date.ToLongDateString()}\nPlease provide a response at <put link or mention appointment page>");
+            return HttpStatusCode.Created;
         }
         public HttpStatusCode CancelAppointment(int AppID)
         {
-            Appointement? findApp = context.Appointements.SingleOrDefault(app => app.Id == AppID);
+            Appointement? findApp = context.Appointements.Include(app=>app.Doctor).Include(app=>app.Patient).SingleOrDefault(app => app.Id == AppID);
             if (findApp != null)
             {
+                if (findApp.Status == AppStatus.Cancaled) return HttpStatusCode.NoContent;
+                string gender = findApp.Patient.Gender == Gender.PreferNotToSay ? "" : (findApp.Patient.Gender == Gender.Male ? "Mr." : "Mrs.");
                 findApp.Status = AppStatus.Cancaled;
-                context.SaveChanges();            }
+                context.SaveChanges();
+                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Doctor.Name}\nWe regret to inform you that {gender}{findApp.Patient.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}.");
+                return HttpStatusCode.NoContent;
+            }
             else
             {
                 return HttpStatusCode.NotFound;
             }
-            return HttpStatusCode.NoContent;
         }
 
 
@@ -50,12 +56,15 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             if(card != null)
             {
+                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == card.PatientID);
+                if (patient == null) { throw new KeyNotFoundException($"Patient with ID {card.PatientID} does not exist"); }
                 context.Paycard.Add(card);
                 context.SaveChanges();
-                return HttpStatusCode.NoContent;
+                return HttpStatusCode.Created;
             }
             else { return HttpStatusCode.BadRequest; }
         }
+
 
         public HttpStatusCode AddPatient(Patient patient)
         {
@@ -63,7 +72,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 context.Patients.Add(patient);
                 context.SaveChanges();
-                return HttpStatusCode.NoContent;
+                return HttpStatusCode.Created;
             }
             else { return HttpStatusCode.BadRequest; }
         }
@@ -72,9 +81,13 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             if(review != null)
             {
+                Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == review.DoctorID);
+                if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {review.DoctorID} does not exist"); }
+                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID);
+                if (patient == null) { throw new KeyNotFoundException($"Patient with ID {review.PatientID} does not exist"); }
                 context.Reviews.Add(review);
                 context.SaveChanges();
-                return HttpStatusCode.NoContent;
+                return HttpStatusCode.Created;
             }
             else { return HttpStatusCode.BadRequest; }
         }
@@ -88,7 +101,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
         }
 
         public HttpStatusCode DeletePatient(int id)
@@ -100,7 +113,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
         }
 
         public HttpStatusCode DeleteReview(int reviewID)
@@ -112,59 +125,62 @@ namespace Clinic.Infrastructure.RepoImplemention
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
         }
 
         public HttpStatusCode EditCard(Paycard card)
         {
-            if (card != null)
+            var cardCheck = context.Paycard.SingleOrDefault(crd => crd.Id == card.Id);
+            if (cardCheck != null)
             {
                 context.Paycard.Update(card);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
+        }
+        public Paycard? GetCard(int patientID)
+        {
+            var card = context.Paycard.SingleOrDefault(card => card.PatientID == patientID);
+            if (card is null) { throw new KeyNotFoundException($"Patient with ID {patientID} doesn't have a card"); }
+            return card;
         }
 
         public HttpStatusCode EditPatient(Patient patient)
         {
-            if (patient != null)
+            var checkPatient = context.Patients.SingleOrDefault(pat => pat.Id == patient.Id);
+            if (checkPatient != null)
             {
                 context.Patients.Update(patient);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
         }
 
         public HttpStatusCode EditReview(Review review)
         {
-            if (review != null)
+            var checkReview = context.Reviews.SingleOrDefault(rev => rev.Id == review.Id);
+            if (checkReview != null)
             {
                 context.Reviews.Update(review);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else { return HttpStatusCode.BadRequest; }
+            else { return HttpStatusCode.NotFound; }
         }
 
-        public dynamic GetAllAppointements(int PatientID, DateTime? date = null)
+        public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null)
         {
             Patient? findPatient = context.Patients.Find(PatientID);
-            if (findPatient != null)
+            if (findPatient == null) throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            if (date != null)
             {
-                if (date != null)
-                {
-                    return context.Appointements.Where(app => app.Date.Date == date.Value.Date && app.PatientID == PatientID).ToList();
-                }
-                else
-                {
-                    return context.Appointements.Where(app => app.PatientID == PatientID).ToList();
-                }
+                return context.Appointements.Where(app => app.Date.Date == date.Value.Date && app.PatientID == PatientID).ToList();
             }
             else
             {
-                return HttpStatusCode.NotFound;
+                return context.Appointements.Where(app => app.PatientID == PatientID).ToList();
             }
         }
 
@@ -172,17 +188,18 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             return context.Patients
                     .Where(pat => pat.Email.Contains(email)&&pat.Name.Contains(name))
-                    .Skip((pageSize - 1) * pageNumber)
+                    .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
         }
 
-        public dynamic GetAppointements(int DoctorID, int PatientID)
+        public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID)
         {
             Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID);
+            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist"); }
             Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID);
-            string message = "";
-            if (doc == null || patient == null) return HttpStatusCode.NotFound;
+            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist"); ; }
+
             List<Appointement> app = context.Appointements.Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID).ToList();
             SingleDoctorAppointment patientApps = new SingleDoctorAppointment();
             patientApps.Doctor = doc;
@@ -190,11 +207,17 @@ namespace Clinic.Infrastructure.RepoImplemention
             return patientApps;
         }
 
-        public dynamic GetPatient(int id)
+        public Patient? GetPatient(int id)
         {
             Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == id);
-            if(patient == null) return HttpStatusCode.NotFound;
+            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {id} doesn't exist"); }
             return patient;
+        }
+        public Review? GetReview(int id)
+        {
+            Review? review = context.Reviews.SingleOrDefault(review => review.Id == id);
+            if (review == null) { throw new KeyNotFoundException($"Review with ID {id} doesn't exist"); }
+            return review;
         }
 
         public int GetPatientCount()

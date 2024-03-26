@@ -1,4 +1,5 @@
-﻿using Clinic.Core.Models;
+﻿using Clinic.Core.DTO;
+using Clinic.Core.Models;
 using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
 using System;
@@ -20,50 +21,50 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             this.context = context;
         }
-        public HttpStatusCode ActivateAccount(int accountID, string accountType = "")
+        public HttpStatusCode ActivateAccount(AccountStatus account)
         {
             
-            if(accountType == "Doctor" )
+            if(account.Type == "Doctor" )
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc=> doc.Id == accountID);
-                if(doctor == null )return HttpStatusCode.BadRequest;
+                Doctor? doctor = context.Doctors.FirstOrDefault(doc=> doc.Id == account.ID);
+                if(doctor == null )return HttpStatusCode.NotFound;
                 doctor.Status = Status.Active;
                 return HttpStatusCode.NoContent;
             }
-            else if(accountType == "Patient")
+            else if(account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == accountID);
-                if (patient == null) return HttpStatusCode.BadRequest;
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
+                if (patient == null) return HttpStatusCode.NotFound;
                 patient.Status = Status.Active;
                 return HttpStatusCode.NoContent;
             }
             return HttpStatusCode.BadRequest;
         }
 
-        public HttpStatusCode BanAccount(int accountID, string accountType)
+        public HttpStatusCode BanAccount(AccountStatus account)
         {
-            if (accountType == "Doctor")
+            if (account.Type == "Doctor")
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == accountID);
-                if (doctor == null) return HttpStatusCode.BadRequest;
+                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
+                if (doctor == null) return HttpStatusCode.NotFound;
                 doctor.Status = Status.Banned;
                 return HttpStatusCode.NoContent;
             }
-            else if (accountType == "Patient")
+            else if (account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == accountID);
-                if (patient == null) return HttpStatusCode.BadRequest;
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
+                if (patient == null) return HttpStatusCode.NotFound;
                 patient.Status = Status.Banned;
                 return HttpStatusCode.NoContent;
             }
             return HttpStatusCode.BadRequest;
         }
 
-        public HttpStatusCode ConfirmationRequest(int accountID, string accountType)
+        public HttpStatusCode ConfirmationRequest(AccountStatus account)
         {
-            if (accountType == "Doctor")
+            if (account.Type == "Doctor")
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == accountID);
+                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
                 if (doctor == null) return HttpStatusCode.BadRequest;
                 confirmEmail? checkConfirm = context.ConfirmEmail.SingleOrDefault(con=>con.Email == doctor.Email);
                 checkConfirm = checkConfirm == null ? new confirmEmail() : checkConfirm;
@@ -73,9 +74,9 @@ namespace Clinic.Infrastructure.RepoImplemention
                 EmailUtilities.SendEmail("Confirm Account", $"Dear Dr.{doctor.Name}\nWe request that you activate this account\nPassKey: {checkConfirm.keypass} \nPlease enter your keypass at <Link or not we will decide later>");
                 return HttpStatusCode.NoContent;
             }
-            else if (accountType == "Patient")
+            else if (account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == accountID);
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
                 if (patient == null) return HttpStatusCode.BadRequest;
                 confirmEmail? checkConfirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == patient.Email);
                 checkConfirm = checkConfirm == null ? new confirmEmail() : checkConfirm;
@@ -90,18 +91,18 @@ namespace Clinic.Infrastructure.RepoImplemention
             return HttpStatusCode.BadRequest;
         }
 
-        public HttpStatusCode DeactivateAccount(int accountID, string accountType)
+        public HttpStatusCode DeactivateAccount(AccountStatus account)
         {
-            if (accountType == "Doctor")
+            if (account.Type == "Doctor")
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == accountID);
+                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
                 if (doctor == null) return HttpStatusCode.BadRequest;
                 doctor.Status = Status.Inactive;
                 return HttpStatusCode.NoContent;
             }
-            else if (accountType == "Patient")
+            else if (account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == accountID);
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
                 if (patient == null) return HttpStatusCode.BadRequest;
                 patient.Status = Status.Inactive;
                 return HttpStatusCode.NoContent;
@@ -109,19 +110,20 @@ namespace Clinic.Infrastructure.RepoImplemention
             return HttpStatusCode.BadRequest;
         }
 
-        public dynamic GetKeypass(int accountID, string accountType)
+        public dynamic GetKeypass(AccountStatus account)
         {
-            if (accountType == "Doctor")
+            if (account.Type == "Doctor")
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == accountID);
-                if (doctor == null) return HttpStatusCode.BadRequest;
+                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
+                if (doctor == null) return HttpStatusCode.NotFound;
                 confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == doctor.Email);
                 if(confirm == null) return HttpStatusCode.NotFound;
                 return confirm.keypass;
             }
-            else if (accountType == "Patient")
+            else if (account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == accountID);
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
+                if (patient == null) return HttpStatusCode.NotFound;
                 confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == patient.Email);
                 if (confirm == null) return HttpStatusCode.NotFound;
                 return confirm.keypass;

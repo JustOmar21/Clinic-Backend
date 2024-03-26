@@ -34,7 +34,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 return HttpStatusCode.BadRequest;
             }
-            return HttpStatusCode.NoContent;
+            return HttpStatusCode.Created;
             
         }
         public HttpStatusCode DeleteDoctor(int id)
@@ -105,7 +105,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 findApp.Status = AppStatus.Rejected;
                 context.SaveChanges();
-                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
+                EmailUtilities.SendEmail("Appointment Rejected", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
@@ -153,7 +153,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             doctors =
                 doctors
                 .Where(doc=> doc.Email.Contains(email))
-                .Skip((pageSize - 1) * pageNumber)
+                .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
             List<SingleDoctorDetails> docsFullDetails = new List<SingleDoctorDetails> ();
@@ -203,7 +203,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 context.Schedule.Add(schedule);
                 context.SaveChanges();
-                return HttpStatusCode.NoContent;
+                return HttpStatusCode.Created;
             }
             else return HttpStatusCode.BadRequest;
         }
