@@ -2,7 +2,10 @@ using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
 using Clinic.Infrastructure.RepoImplemention;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 namespace Clinic.API
 {
@@ -19,6 +22,11 @@ namespace Clinic.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             ///////////////////////////////
+            //builder.Services.Configure<JsonOptions>(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            //    options.JsonSerializerOptions.WriteIndented = true;
+            //});
             builder.Services.AddTransient<IDoctorRepo, DoctorRepo>();
             builder.Services.AddTransient<IPatientRepo, PatientRepo>();
             builder.Services.AddTransient<IAdminRepo, AdminRepo>();
