@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
@@ -15,7 +16,9 @@ namespace Clinic.Core.Models
         public Gender Gender { get; set; }
         public DateTime DOB { get; set; }
         public Status Status { get; set; }
+        [JsonIgnore]
         public virtual IEnumerable<Review>? Reviews { get; set; }
+        [JsonIgnore]
         public virtual IEnumerable<Appointement>? Appointements { get; set; }
     }
 }

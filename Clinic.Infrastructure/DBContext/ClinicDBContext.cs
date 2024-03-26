@@ -26,7 +26,9 @@ namespace Clinic.Infrastructure.DBContext
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Doctor>().HasIndex(doc => doc.Email).IsUnique();
             modelBuilder.Entity<Patient>().HasIndex(pat => pat.Email).IsUnique();
-            modelBuilder.Entity<Appointement>().HasIndex(app => new { app.Date, app.Order });
+            modelBuilder.Entity<Appointement>().HasIndex(app => new { app.Date, app.Order }).IsUnique();
+            modelBuilder.Entity<Appointement>().HasIndex(app => new { app.PatientID, app.DoctorID, app.Date }).IsUnique();
+            modelBuilder.Entity<Paycard>().HasIndex(app => app.PatientID).IsUnique();
         }
     }
 }

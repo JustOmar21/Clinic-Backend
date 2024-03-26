@@ -4,6 +4,7 @@ using Clinic.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicDBContext))]
-    partial class ClinicDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240326044946_docNIDint2str")]
+    partial class docNIDint2str
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,11 +55,9 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.HasIndex("DoctorID");
 
-                    b.HasIndex("Date", "Order")
-                        .IsUnique();
+                    b.HasIndex("PatientID");
 
-                    b.HasIndex("PatientID", "DoctorID", "Date")
-                        .IsUnique();
+                    b.HasIndex("Date", "Order");
 
                     b.ToTable("Appointements");
                 });

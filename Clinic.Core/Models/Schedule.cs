@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
@@ -17,6 +18,7 @@ namespace Clinic.Core.Models
         public string Thursday { get; set;}
         public string Friday { get; set;}
         public int DoctorID { get; set; }
-        public virtual Doctor Doctor { get; set; }
+        [JsonIgnore]
+        public virtual Doctor? Doctor { get; set; }
     }
 }

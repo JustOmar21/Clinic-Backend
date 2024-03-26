@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
@@ -16,7 +17,9 @@ namespace Clinic.Core.Models
         public DateTime CreatedDate { get; set; }
         public int DoctorID { get; set; }
         public int PatientID { get; set; }
-        public virtual Patient Patient { get; set; }
-        public virtual Doctor Doctor { get; set; }
+        [JsonIgnore]
+        public virtual Patient? Patient { get; set; }
+        [JsonIgnore]
+        public virtual Doctor? Doctor { get; set; }
     }
 }
