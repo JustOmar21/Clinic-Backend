@@ -11,11 +11,13 @@ namespace Clinic.Core.Repos
 {
     public interface IPatientRepo
     {
-        public int GetPatientCount();
+        public int GetPatientCount(string name = "", string email = "");
         public List<Patient> GetAllPatient(int pageNumber = 1, int pageSize = 10, string name = "" , string email = "");
         public Patient? GetPatient(int id);
-        public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID);
-        public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null);
+        public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID , int pageNumber = 1, int pageSize = 10);
+        public int GetAppointementsCount(int DoctorID, int PatientID);
+        public int GetAllAppointementsCount(int PatientID, DateTime? date = null);
+        public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null, int pageNumber = 1, int pageSize = 10);
         public HttpStatusCode AddPatient(Patient patient);
         public HttpStatusCode EditPatient(Patient patient);
         public HttpStatusCode DeletePatient(int id);

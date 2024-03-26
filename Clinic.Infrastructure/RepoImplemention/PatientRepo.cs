@@ -170,17 +170,41 @@ namespace Clinic.Infrastructure.RepoImplemention
             else { return HttpStatusCode.NotFound; }
         }
 
-        public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null)
+        public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null, int pageNumber = 1, int pageSize = 10)
         {
             Patient? findPatient = context.Patients.Find(PatientID);
             if (findPatient == null) throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
             if (date != null)
             {
-                return context.Appointements.Where(app => app.Date.Date == date.Value.Date && app.PatientID == PatientID).ToList();
+                return context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.PatientID == PatientID)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
             else
             {
-                return context.Appointements.Where(app => app.PatientID == PatientID).ToList();
+                return context.Appointements.Where(app => app.PatientID == PatientID)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+        }
+        public int GetAllAppointementsCount(int PatientID, DateTime? date = null)
+        {
+            Patient? findPatient = context.Patients.Find(PatientID);
+            if (findPatient == null) throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            if (date != null)
+            {
+                return context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.PatientID == PatientID)
+                    .Count();
+            }
+            else
+            {
+                return context.Appointements
+                    .Where(app => app.PatientID == PatientID)
+                    .Count();
             }
         }
 
@@ -193,18 +217,33 @@ namespace Clinic.Infrastructure.RepoImplemention
                     .ToList();
         }
 
-        public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID)
+        public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID, int pageNumber = 1, int pageSize = 10)
         {
             Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID);
             if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist"); }
             Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID);
             if (patient == null) { throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist"); ; }
 
-            List<Appointement> app = context.Appointements.Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID).ToList();
+            List<Appointement> app = context.Appointements
+                .Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
             SingleDoctorAppointment patientApps = new SingleDoctorAppointment();
             patientApps.Doctor = doc;
             patientApps.Appointements = app;
             return patientApps;
+        }
+        public int GetAppointementsCount(int DoctorID, int PatientID)
+        {
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID);
+            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist"); }
+            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID);
+            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist"); ; }
+
+            return context.Appointements
+                .Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID)
+                .Count();
         }
 
         public Patient? GetPatient(int id)
@@ -220,9 +259,11 @@ namespace Clinic.Infrastructure.RepoImplemention
             return review;
         }
 
-        public int GetPatientCount()
+        public int GetPatientCount(string name = "", string email = "")
         {
-            return context.Patients.Count();
+            return context.Patients
+                .Where(pat => pat.Email.Contains(email) && pat.Name.Contains(name))
+                .Count();
         }
     }
 }

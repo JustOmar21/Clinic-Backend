@@ -81,23 +81,39 @@ namespace Clinic.API.Controllers
             return Ok(_patientRepo.GetCard(cardID));
         }
         [HttpGet("Count")]
-        public IActionResult GetPatientCount()
+        [HttpGet("Count/name={name}")]
+        [HttpGet("Count/email={email}")]
+        [HttpGet("Count/name={name}&email={email}")]
+        public IActionResult GetPatientCount(string name = "", string email = "")
         {
-            return Ok(_patientRepo.GetPatientCount());
+            return Ok(_patientRepo.GetPatientCount(name,email));
         }
 
-        [HttpGet("Appointment/patient={patientID:int}&date={date:datetime}")]
-        [HttpGet("Appointment/patient={patientID:int}")]
-        public IActionResult GetAllAppointments(int patientID,DateTime? date)
+        [HttpGet("Appointment/patient={patientID:int}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        [HttpGet("Appointment/patient={patientID:int}&date={date:datetime}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        public IActionResult GetAllAppointments(int patientID,DateTime? date,int pageNumber = 1, int pageSize = 10)
         {
             if(date is not null)
             date = date.Value.Date;
-            return Ok(_patientRepo.GetAllAppointements(patientID,date));
+            return Ok(_patientRepo.GetAllAppointements(patientID,date,pageNumber,pageSize));
         }
-        [HttpGet("Appointment/doctor={docID:int}&patient={patientID:int}")]
-        public IActionResult GetDocAppointments(int docID, int patientID)
+        [HttpGet("Appointment/Count/patient={patientID:int}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        [HttpGet("Appointment/Count/patient={patientID:int}&date={date:datetime}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        public IActionResult GetAllAppointmentsCount(int patientID, DateTime? date)
         {
-            return Ok(_patientRepo.GetAppointements(docID, patientID));
+            if (date is not null)
+                date = date.Value.Date;
+            return Ok(_patientRepo.GetAllAppointementsCount(patientID, date));
+        }
+        [HttpGet("Appointment/doctor={docID:int}&patient={patientID:int}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        public IActionResult GetDocAppointments(int docID, int patientID, int pageNumber = 1, int pageSize = 10)
+        {
+            return Ok(_patientRepo.GetAppointements(docID, patientID,pageNumber,pageSize));
+        }
+        [HttpGet("Appointment/Count/doctor={docID:int}&patient={patientID:int}&pagenumber={pageNumber:int}&pagesize={pageSize:int}")]
+        public IActionResult GetDocAppointmentsCount(int docID, int patientID, int pageNumber = 1, int pageSize = 10)
+        {
+            return Ok(_patientRepo.GetAppointementsCount(docID, patientID));
         }
 
         [HttpGet("Review/{reviewID:int}")]
@@ -106,7 +122,7 @@ namespace Clinic.API.Controllers
             return Ok(_patientRepo.GetReview(reviewID));
         }
         [HttpPost("Review/Add")]
-        public IActionResult GetReview(Review review)
+        public IActionResult AddReview(Review review)
         {
             return StatusCode((int)_patientRepo.AddReview(review));
         }
