@@ -39,6 +39,13 @@ namespace Clinic.API
             builder.Services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<ClinicDBContext>()
             .AddDefaultTokenProviders();
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy("Open4All", crosPolicy =>
+                {
+                    crosPolicy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
