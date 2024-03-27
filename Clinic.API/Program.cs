@@ -56,6 +56,7 @@ namespace Clinic.API
             }
 
             app.UseHttpsRedirection();
+            app.UseCors("Open4All");
             app.UseAuthentication();
             app.UseAuthorization();
 
