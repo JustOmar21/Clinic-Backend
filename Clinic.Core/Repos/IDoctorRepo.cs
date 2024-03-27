@@ -26,6 +26,11 @@ namespace Clinic.Core.Repos
         public HttpStatusCode ConfirmAppointment(int AppID);
         public HttpStatusCode CancelAppointment(int AppID);
         public HttpStatusCode RejectAppointment(int AppID);
+        public HttpStatusCode AddSpeciality (Speciality speciality);
+        public HttpStatusCode DeleteSpeciality (int specialityID);
+        public HttpStatusCode EditSpeciality (Speciality speciality);
+        public Speciality GetSpeciality(int specialityID);
+        public List<Speciality> GetAllSpeciality();
         public HttpStatusCode AddSchedule(Schedule schedule);
         public HttpStatusCode EditSchedule(Schedule schedule);
         public Schedule GetSchedule(int scheduleID);

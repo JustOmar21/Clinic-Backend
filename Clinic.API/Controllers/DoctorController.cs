@@ -129,15 +129,46 @@ namespace Clinic.API.Controllers
         {
             return Ok(_doctorRepo.GetSchedule(scheduleID));
         }
-        [HttpGet("Schedule/Add")]
+        [HttpPost("Schedule/Add")]
         public IActionResult AddSchedule(Schedule schedule)
         {
             return StatusCode((int)_doctorRepo.AddSchedule(schedule));
         }
-        [HttpGet("Schedule/Edit")]
+        [HttpPut("Schedule/Edit")]
         public IActionResult EditSchedule(Schedule schedule)
         {
             return StatusCode((int)_doctorRepo.EditSchedule(schedule));
+        }
+        [HttpGet("Speciality/{specialityID:int}")]
+        public IActionResult GetSpeciality(int specialityID)
+        {
+            return Ok(_doctorRepo.GetSpeciality(specialityID));
+        }
+        [HttpDelete("Speciality/Delete/{specialityID:int}")]
+        public IActionResult DeleteSpeciality(int specialityID)
+        {
+            return Ok(_doctorRepo.DeleteSpeciality(specialityID));
+        }
+        [HttpPost("Speciality/Add")]
+        public IActionResult AddSpeciality(Speciality speciality)
+        {
+            return StatusCode((int)_doctorRepo.AddSpeciality(speciality));
+        }
+        [HttpPut("Speciality/Edit")]
+        public IActionResult EditSpeciality(Speciality speciality)
+        {
+            return StatusCode((int)_doctorRepo.EditSpeciality(speciality));
+        }
+        [HttpGet("Speciality")]
+        public IActionResult GetAllSpeciality()
+        {
+            return Ok(_doctorRepo.GetAllSpeciality());
+        }
+
+        [HttpPost("Appointment/Order")]
+        public IActionResult GetCurrentOrder(DateTime date)
+        {
+            return Ok(_doctorRepo.GetCurrentOrder(date));
         }
     }
 }

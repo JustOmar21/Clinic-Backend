@@ -270,11 +270,54 @@ namespace Clinic.Infrastructure.RepoImplemention
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
-            else return HttpStatusCode.BadRequest;
+            else return HttpStatusCode.NotFound;
         }
         public Schedule GetSchedule(int scheduleID)
         {
             return context.Schedule.SingleOrDefault(scd => scd.Id == scheduleID) ?? throw new KeyNotFoundException($"Schedule with ID {scheduleID} doesn't exist");
+        }
+        public HttpStatusCode AddSpeciality(Speciality speciality)
+        {
+
+            if (speciality != null)
+            {
+                context.Speciality.Add(speciality);
+                context.SaveChanges();
+                return HttpStatusCode.Created;
+            }
+            else return HttpStatusCode.BadRequest;
+        }
+
+        public HttpStatusCode EditSpeciality(Speciality speciality)
+        {
+            Speciality checkSpec = context.Speciality.SingleOrDefault(spec => spec.ID == speciality.ID) ?? throw new KeyNotFoundException($"Speciality with ID {speciality.ID} doesn't exist");
+            if (checkSpec != null)
+            {
+                context.Speciality.Update(speciality);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else return HttpStatusCode.BadRequest;
+        }
+        public HttpStatusCode DeleteSpeciality(int specialityID)
+        {
+            Speciality checkSpec = context.Speciality.SingleOrDefault(spec => spec.ID == specialityID) ?? throw new KeyNotFoundException($"Speciality with ID {specialityID} doesn't exist");
+            if (checkSpec != null)
+            {
+                context.Speciality.Remove(checkSpec);
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else return HttpStatusCode.BadRequest;
+        }
+        public Speciality GetSpeciality(int specialityID)
+        {
+            return context.Speciality.SingleOrDefault(spc => spc.ID == specialityID) ?? throw new KeyNotFoundException($"Speciality with ID {specialityID} doesn't exist");
+        }
+
+        public List<Speciality> GetAllSpeciality()
+        {
+            return context.Speciality.ToList();
         }
 
         public int GetCurrentOrder(DateTime date)
