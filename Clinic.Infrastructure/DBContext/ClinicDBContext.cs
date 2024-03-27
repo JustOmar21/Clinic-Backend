@@ -29,6 +29,7 @@ namespace Clinic.Infrastructure.DBContext
             modelBuilder.Entity<Appointement>().HasIndex(app => new { app.Date, app.Order }).IsUnique();
             modelBuilder.Entity<Appointement>().HasIndex(app => new { app.PatientID, app.DoctorID, app.Date }).IsUnique();
             modelBuilder.Entity<Paycard>().HasIndex(app => app.PatientID).IsUnique();
+            modelBuilder.Entity<Schedule>().HasIndex(scd => scd.DoctorID).IsUnique();
         }
     }
 }
