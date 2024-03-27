@@ -11,19 +11,24 @@ namespace Clinic.Core.Repos
 {
     public interface IDoctorRepo
     {
-        public int GetDoctorsCount();
-        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
-        public dynamic GetDoctor(int id);
-        public dynamic GetAllAppointements(int DoctorID, DateTime? date = null);
-        public dynamic GetPatientAppointements(int DoctorID, int PatientID);
+        public int GetDoctorsCount(string Location = "", int specialityID = -1, string email = "");
+        public List<Doctor> GetAllDoctors(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
+        public List<SingleDoctorDetails> GetAllDoctorsDetails(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
+        public Doctor GetDoctor(int id);
+        public SingleDoctorDetails GetDoctorDetails(int id);
+        public List<SinglePatientAppointment>? GetAllAppointements(int DoctorID, DateTime? date = null, int pageNumber = 1, int pageSize = 10);
+        public int GetAllAppointementsCount(int DoctorID, DateTime? date = null);
+        public PatientAppointments GetPatientAppointements(int DoctorID, int PatientID, int pageNumber = 1, int pageSize = 10);
+        public int GetPatientAppointementsCount(int DoctorID, int PatientID);
         public HttpStatusCode AddDoctor(Doctor doctor);
         public HttpStatusCode EditDoctor(Doctor doctor);
         public HttpStatusCode DeleteDoctor(int id);
         public HttpStatusCode ConfirmAppointment(int AppID);
-        public HttpStatusCode CancalAppointment(int AppID);
+        public HttpStatusCode CancelAppointment(int AppID);
         public HttpStatusCode RejectAppointment(int AppID);
         public HttpStatusCode AddSchedule(Schedule schedule);
         public HttpStatusCode EditSchedule(Schedule schedule);
+        public Schedule GetSchedule(int scheduleID);
         public int GetCurrentOrder(DateTime date);
     }
 }
