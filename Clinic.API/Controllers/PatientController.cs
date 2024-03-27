@@ -126,7 +126,7 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_patientRepo.AddReview(review));
         }
-        [HttpPost("Review/Edit")]
+        [HttpPut("Review/Edit")]
         public IActionResult EditReview(Review review)
         {
             return StatusCode((int)_patientRepo.EditReview(review));
