@@ -67,11 +67,12 @@ namespace Clinic.Infrastructure.RepoImplemention
             return HttpStatusCode.NoContent;
         }
 
-        public HttpStatusCode CancalAppointment(int AppID)
+        public HttpStatusCode CancelAppointment(int AppID)
         {
             Appointement? findApp = context.Appointements.Include(app => app.Patient).SingleOrDefault(app=>app.Id == AppID);
             if (findApp != null)
             {
+                if (findApp.Status == AppStatus.Cancaled) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Cancaled;
                 context.SaveChanges();
                 EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
@@ -88,6 +89,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             Appointement? findApp = context.Appointements.Include(app => app.Patient).Include(app => app.Doctor).SingleOrDefault(app => app.Id == AppID);
             if (findApp != null)
             {
+                if (findApp.Status == AppStatus.Accepted) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Accepted;
                 context.SaveChanges();
                 EmailUtilities.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\nWe would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
@@ -103,6 +105,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             Appointement? findApp = context.Appointements.Include(app => app.Patient).SingleOrDefault(app => app.Id == AppID);
             if (findApp != null)
             {
+                if (findApp.Status == AppStatus.Rejected) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Rejected;
                 context.SaveChanges();
                 EmailUtilities.SendEmail("Appointment Rejected", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
@@ -115,37 +118,54 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
 
 
-        public dynamic GetAllAppointements(int DoctorID, DateTime? date = null)
+        public List<SinglePatientAppointment>? GetAllAppointements(int DoctorID, DateTime? date = null, int pageNumber = 1, int pageSize = 10)
         {
-            Doctor? findDoc = context.Doctors.Find(DoctorID);
-            if(findDoc != null)
+            Doctor? findDoc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            List<Appointement> apps;
+            List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
+            if (date != null)
             {
-                List<Appointement> apps;
-                List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
-                if (date != null)
-                {
-                    apps = context.Appointements.Where(app=> app.Date.Date == date.Value.Date && app.DoctorID == DoctorID).ToList();
-                }
-                else
-                {
-                    apps = context.Appointements.Where(app => app.DoctorID == DoctorID).ToList();
-                }
-                foreach(Appointement app in apps)
-                {
-                    SinglePatientAppointment singleApp = new SinglePatientAppointment();
-                    singleApp.Patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID);
-                    singleApp.Appointement = app;
-                    patientApps.Add(singleApp);
-                }
-                return patientApps;
+                apps = context.Appointements
+                    .Where(app=> app.Date.Date == date.Value.Date && app.DoctorID == DoctorID)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
             }
             else
             {
-                return HttpStatusCode.NotFound;
+                apps = context.Appointements
+                    .Where(app => app.DoctorID == DoctorID)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+            }
+            foreach(Appointement app in apps)
+            {
+                SinglePatientAppointment singleApp = new SinglePatientAppointment();
+                singleApp.Patient = context.Patients.SingleOrDefault(pat => pat.Id == app.PatientID);
+                singleApp.Appointement = app;
+                patientApps.Add(singleApp);
+            }
+            return patientApps;
+        }
+        public int GetAllAppointementsCount(int DoctorID, DateTime? date = null)
+        {
+            Doctor? findDoc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            if (date != null)
+            {
+                return context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID)
+                    .Count();
+            }
+            else
+            {
+                return context.Appointements
+                    .Where(app => app.DoctorID == DoctorID)
+                    .Count();
             }
         }
 
-        public List<SingleDoctorDetails> GetAllDoctors(int pageNumber = 1, int pageSize = 10, string Location = "", int specialityID = -1, string email = "")
+        public List<SingleDoctorDetails> GetAllDoctorsDetails(int pageNumber = 1, int pageSize = 10, string Location = "", int specialityID = -1, string email = "")
         {
             List<Doctor> doctors = context.Doctors.ToList();
             if (Location != "") doctors = doctors.Where(doc => doc.Governance == Location).ToList();
@@ -168,39 +188,72 @@ namespace Clinic.Infrastructure.RepoImplemention
             }
             return docsFullDetails;
         }
+        public List<Doctor> GetAllDoctors(int pageNumber = 1, int pageSize = 10, string Location = "", int specialityID = -1, string email = "")
+        {
+            List<Doctor> doctors = context.Doctors.ToList();
+            if (Location != "") doctors = doctors.Where(doc => doc.Governance == Location).ToList();
+            if (specialityID != -1) doctors = doctors.Where(doc => doc.SpecialityID == specialityID).ToList();
+            return doctors
+                    .Where(doc => doc.Email.Contains(email))
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+        }
 
-        public dynamic GetDoctor(int id)
+        public SingleDoctorDetails GetDoctorDetails(int id)
         {
             SingleDoctorDetails doctorDetails = new SingleDoctorDetails();
-            doctorDetails.Doctor = context.Doctors.SingleOrDefault(doc => doc.Id == id);
-            if(doctorDetails.Doctor == null) { return HttpStatusCode.NotFound; }
+            doctorDetails.Doctor = context.Doctors.SingleOrDefault(doc => doc.Id == id) ?? throw new KeyNotFoundException($"Doctor with ID {id} doesn't exist");
             doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doctorDetails.Doctor.Id);
             doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
             doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
             return doctorDetails;
         }
-
-        public int GetDoctorsCount()
+        public Doctor GetDoctor(int id)
         {
-            return context.Doctors.Count();
+            return context.Doctors.SingleOrDefault(doc => doc.Id == id) ?? throw new KeyNotFoundException($"Doctor with ID {id} doesn't exist");
         }
 
-        public dynamic GetPatientAppointements(int DoctorID, int PatientID)
+        public int GetDoctorsCount(string Location = "", int specialityID = -1, string email = "")
         {
-            Doctor? doc = context.Doctors.SingleOrDefault(doc=>doc.Id ==  DoctorID);
-            Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == PatientID);
-            if (doc == null || patient == null) return HttpStatusCode.NotFound;
-            List<Appointement> app = context.Appointements.Where(app=>app.DoctorID==DoctorID&&app.PatientID==PatientID).ToList();
-            PatientAppointments patientApps = new PatientAppointments();
-            patientApps.Patient = patient;
-            patientApps.Appointements = app;
+            List<Doctor> doctors = context.Doctors.ToList();
+            if (Location != "") doctors = doctors.Where(doc => doc.Governance == Location).ToList();
+            if (specialityID != -1) doctors = doctors.Where(doc => doc.SpecialityID == specialityID).ToList();
+            return doctors
+                    .Where(doc => doc.Email.Contains(email))
+                    .Count();
+        }
+
+        public PatientAppointments GetPatientAppointements(int DoctorID, int PatientID, int pageNumber = 1, int pageSize = 10)
+        {
+            Doctor? doc = context.Doctors.SingleOrDefault(doc=>doc.Id ==  DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            List<Appointement> app = context.Appointements.Where(app=>app.DoctorID==DoctorID&&app.PatientID==PatientID)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            PatientAppointments patientApps = new PatientAppointments
+            {
+                Patient = patient,
+                Appointements = app
+            };
             return patientApps;
+        }
+        public int GetPatientAppointementsCount(int DoctorID, int PatientID)
+        {
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            return context.Appointements
+                .Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID)
+                .Count();
         }
 
         public HttpStatusCode AddSchedule(Schedule schedule)
         {
-            if(schedule != null)
+            
+            if (schedule != null)
             {
+                Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == schedule.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {schedule.DoctorID} does not exist");
                 context.Schedule.Add(schedule);
                 context.SaveChanges();
                 return HttpStatusCode.Created;
@@ -210,13 +263,18 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public HttpStatusCode EditSchedule(Schedule schedule)
         {
-            if (schedule != null)
+            Schedule? checkSchedule = context.Schedule.SingleOrDefault(sch=>sch.Id == schedule.Id);
+            if (checkSchedule != null)
             {
                 context.Schedule.Update(schedule);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
             else return HttpStatusCode.BadRequest;
+        }
+        public Schedule GetSchedule(int scheduleID)
+        {
+            return context.Schedule.SingleOrDefault(scd => scd.Id == scheduleID) ?? throw new KeyNotFoundException($"Schedule with ID {scheduleID} doesn't exist");
         }
 
         public int GetCurrentOrder(DateTime date)

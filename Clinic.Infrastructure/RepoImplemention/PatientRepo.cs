@@ -23,10 +23,8 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public HttpStatusCode AddAppointment(Appointement app)
         {
-            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == app.DoctorID);
-            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {app.DoctorID} does not exist"); }
-            Patient? patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID);
-            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {app.PatientID} does not exist"); }
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == app.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {app.DoctorID} does not exist");
+            Patient? patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {app.PatientID} does not exist");
             context.Appointements.Add(app);
             context.SaveChanges();
             string gender = patient.Gender == Gender.PreferNotToSay ? "" : (patient.Gender == Gender.Male ? "Mr." : "Mrs.");
@@ -56,8 +54,7 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             if(card != null)
             {
-                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == card.PatientID);
-                if (patient == null) { throw new KeyNotFoundException($"Patient with ID {card.PatientID} does not exist"); }
+                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == card.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {card.PatientID} does not exist");
                 context.Paycard.Add(card);
                 context.SaveChanges();
                 return HttpStatusCode.Created;
@@ -81,10 +78,8 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             if(review != null)
             {
-                Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == review.DoctorID);
-                if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {review.DoctorID} does not exist"); }
-                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID);
-                if (patient == null) { throw new KeyNotFoundException($"Patient with ID {review.PatientID} does not exist"); }
+                Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == review.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {review.DoctorID} does not exist");
+                Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {review.PatientID} does not exist");
                 context.Reviews.Add(review);
                 context.SaveChanges();
                 return HttpStatusCode.Created;
@@ -141,9 +136,7 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public Paycard? GetCard(int patientID)
         {
-            var card = context.Paycard.SingleOrDefault(card => card.PatientID == patientID);
-            if (card is null) { throw new KeyNotFoundException($"Patient with ID {patientID} doesn't have a card"); }
-            return card;
+            return context.Paycard.SingleOrDefault(card => card.PatientID == patientID) ?? throw new KeyNotFoundException($"Patient with ID {patientID} doesn't have a card");
         }
 
         public HttpStatusCode EditPatient(Patient patient)
@@ -172,8 +165,7 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null, int pageNumber = 1, int pageSize = 10)
         {
-            Patient? findPatient = context.Patients.Find(PatientID);
-            if (findPatient == null) throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            Patient? findPatient = context.Patients.Find(PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
             if (date != null)
             {
                 return context.Appointements
@@ -192,8 +184,7 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public int GetAllAppointementsCount(int PatientID, DateTime? date = null)
         {
-            Patient? findPatient = context.Patients.Find(PatientID);
-            if (findPatient == null) throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
+            Patient? findPatient = context.Patients.Find(PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} doesn't exist");
             if (date != null)
             {
                 return context.Appointements
@@ -219,10 +210,8 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID, int pageNumber = 1, int pageSize = 10)
         {
-            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID);
-            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist"); }
-            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID);
-            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist"); ; }
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist");
+            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist");
 
             List<Appointement> app = context.Appointements
                 .Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID)
@@ -236,10 +225,8 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
         public int GetAppointementsCount(int DoctorID, int PatientID)
         {
-            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID);
-            if (doc == null) { throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist"); }
-            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID);
-            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist"); ; }
+            Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} does not exist");
+            Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == PatientID) ?? throw new KeyNotFoundException($"Patient with ID {PatientID} does not exist");
 
             return context.Appointements
                 .Where(app => app.DoctorID == DoctorID && app.PatientID == PatientID)
@@ -248,15 +235,11 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public Patient? GetPatient(int id)
         {
-            Patient? patient = context.Patients.SingleOrDefault(pat=> pat.Id == id);
-            if (patient == null) { throw new KeyNotFoundException($"Patient with ID {id} doesn't exist"); }
-            return patient;
+            return context.Patients.SingleOrDefault(pat=> pat.Id == id) ?? throw new KeyNotFoundException($"Patient with ID {id} doesn't exist");
         }
         public Review? GetReview(int id)
         {
-            Review? review = context.Reviews.SingleOrDefault(review => review.Id == id);
-            if (review == null) { throw new KeyNotFoundException($"Review with ID {id} doesn't exist"); }
-            return review;
+            return context.Reviews.SingleOrDefault(review => review.Id == id) ?? throw new KeyNotFoundException($"Review with ID {id} doesn't exist");
         }
 
         public int GetPatientCount(string name = "", string email = "")

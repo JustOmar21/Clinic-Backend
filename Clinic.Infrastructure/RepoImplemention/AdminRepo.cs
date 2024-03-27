@@ -38,7 +38,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 patient.Status = Status.Active;
                 return HttpStatusCode.NoContent;
             }
-            return HttpStatusCode.BadRequest;
+            throw new KeyNotFoundException($"Account Type {account.Type} does not exist");
         }
 
         public HttpStatusCode BanAccount(AccountStatus account)
@@ -57,7 +57,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 patient.Status = Status.Banned;
                 return HttpStatusCode.NoContent;
             }
-            return HttpStatusCode.BadRequest;
+            throw new KeyNotFoundException($"Account Type {account.Type} does not exist");
         }
 
         public HttpStatusCode ConfirmationRequest(AccountStatus account)
@@ -65,7 +65,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             if (account.Type == "Doctor")
             {
                 Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
-                if (doctor == null) return HttpStatusCode.BadRequest;
+                if (doctor == null) return HttpStatusCode.NotFound;
                 confirmEmail? checkConfirm = context.ConfirmEmail.SingleOrDefault(con=>con.Email == doctor.Email);
                 checkConfirm = checkConfirm == null ? new confirmEmail() : checkConfirm;
                 checkConfirm.Email = doctor.Email;
@@ -77,7 +77,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             else if (account.Type == "Patient")
             {
                 Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
-                if (patient == null) return HttpStatusCode.BadRequest;
+                if (patient == null) return HttpStatusCode.NotFound;
                 confirmEmail? checkConfirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == patient.Email);
                 checkConfirm = checkConfirm == null ? new confirmEmail() : checkConfirm;
                 checkConfirm.Email = patient.Email;
@@ -88,7 +88,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 EmailUtilities.SendEmail("Confirm Account", $"Dear {gender}{patient.Name}\nWe request that you activate this account\nPassKey: {checkConfirm.keypass} \nPlease enter your keypass at <Link or not we will decide later>");
                 return HttpStatusCode.NoContent;
             }
-            return HttpStatusCode.BadRequest;
+            throw new KeyNotFoundException($"Account Type {account.Type} does not exist");
         }
 
         public HttpStatusCode DeactivateAccount(AccountStatus account)
@@ -107,28 +107,24 @@ namespace Clinic.Infrastructure.RepoImplemention
                 patient.Status = Status.Inactive;
                 return HttpStatusCode.NoContent;
             }
-            return HttpStatusCode.BadRequest;
+            throw new KeyNotFoundException($"Account Type {account.Type} does not exist");
         }
 
-        public dynamic GetKeypass(AccountStatus account)
+        public string GetKeypass(AccountStatus account)
         {
             if (account.Type == "Doctor")
             {
-                Doctor? doctor = context.Doctors.FirstOrDefault(doc => doc.Id == account.ID);
-                if (doctor == null) return HttpStatusCode.NotFound;
-                confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == doctor.Email);
-                if(confirm == null) return HttpStatusCode.NotFound;
+                Doctor? doctor = context.Doctors.SingleOrDefault(doc => doc.Id == account.ID) ?? throw new KeyNotFoundException($"Doctor with ID {account.ID} does not exist");
+                confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == doctor.Email) ?? throw new KeyNotFoundException($"Doctor with ID {doctor.Id} does not have a keypass");
                 return confirm.keypass;
             }
             else if (account.Type == "Patient")
             {
-                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID);
-                if (patient == null) return HttpStatusCode.NotFound;
-                confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == patient.Email);
-                if (confirm == null) return HttpStatusCode.NotFound;
+                Patient? patient = context.Patients.FirstOrDefault(pat => pat.Id == account.ID) ?? throw new KeyNotFoundException($"Patient with ID {account.ID} does not exist");
+                confirmEmail? confirm = context.ConfirmEmail.SingleOrDefault(con => con.Email == patient.Email) ?? throw new KeyNotFoundException($"Patient with ID {patient.Id} does not have a keypass");
                 return confirm.keypass;
             }
-            return HttpStatusCode.BadRequest;
+            throw new KeyNotFoundException($"Account Type {account.Type} does not exist");
         }
     }
 }
