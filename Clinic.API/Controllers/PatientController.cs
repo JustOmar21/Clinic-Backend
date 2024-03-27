@@ -38,9 +38,9 @@ namespace Clinic.API.Controllers
             var patient = _patientRepo.GetPatient(id);
             return Ok(patient);
         }
-        [HttpGet("page={pageNumber:int}&size={pageSize:int}&name={name:alpha}&email={email}")]
+        [HttpGet("page={pageNumber:int}&size={pageSize:int}&name={name:alpha}&email={email:alpha}")]
         [HttpGet("page={pageNumber:int}&size={pageSize:int}&name={name:alpha}")]
-        [HttpGet("page={pageNumber:int}&size={pageSize:int}&email={email}")]
+        [HttpGet("page={pageNumber:int}&size={pageSize:int}&email={email:alpha}")]
         [HttpGet("page={pageNumber:int}&size={pageSize:int}")]
         public IActionResult GetAllPatient(int pageNumber, int pageSize, string name = "", string email = "")
         {
@@ -125,6 +125,11 @@ namespace Clinic.API.Controllers
         public IActionResult AddReview(Review review)
         {
             return StatusCode((int)_patientRepo.AddReview(review));
+        }
+        [HttpPost("Review/Edit")]
+        public IActionResult EditReview(Review review)
+        {
+            return StatusCode((int)_patientRepo.EditReview(review));
         }
     }
 }
