@@ -13,6 +13,7 @@ namespace Clinic.Core.Repos
     {
         public int GetPatientCount(string name = "", string email = "");
         public List<Patient> GetAllPatient(int pageNumber = 1, int pageSize = 10, string name = "" , string email = "");
+        public List<Patient> GetAllPatientNoPage();
         public Patient? GetPatient(int id);
         public SingleDoctorAppointment? GetAppointements(int DoctorID, int PatientID , int pageNumber = 1, int pageSize = 10);
         public int GetAppointementsCount(int DoctorID, int PatientID);

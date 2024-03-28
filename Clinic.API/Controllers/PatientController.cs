@@ -131,5 +131,10 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_patientRepo.EditReview(review));
         }
+        [HttpGet("Details")]
+        public IActionResult GetAllPatientsNoPage()
+        {
+            return Ok(_patientRepo.GetAllPatientNoPage());
+        }
     }
 }

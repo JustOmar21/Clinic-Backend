@@ -248,5 +248,10 @@ namespace Clinic.Infrastructure.RepoImplemention
                 .Where(pat => pat.Email.Contains(email) && pat.Name.Contains(name))
                 .Count();
         }
+
+        public List<Patient> GetAllPatientNoPage()
+        {
+            return context.Patients.ToList();
+        }
     }
 }

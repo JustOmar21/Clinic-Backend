@@ -324,5 +324,20 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             return context.Appointements.Where(app=>app.Date.Date == date.Date).Count();
         }
+        public List<SingleDoctor> GetDoctorsWithSpec()
+        {
+            List<Doctor>? doctors = context.Doctors.ToList();
+            List<SingleDoctor> singleDoctors = new List<SingleDoctor>();
+            foreach(Doctor doc in doctors)
+            {
+                SingleDoctor docs = new SingleDoctor
+                {
+                    Doctor = doc,
+                    Speciality = context.Speciality.SingleOrDefault(spec => spec.ID == doc.SpecialityID)
+                };
+                singleDoctors.Add(docs);
+            }
+            return singleDoctors;
+        }
     }
 }

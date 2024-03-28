@@ -170,5 +170,10 @@ namespace Clinic.API.Controllers
         {
             return Ok(_doctorRepo.GetCurrentOrder(date));
         }
+        [HttpGet("Details")]
+        public IActionResult GetDocs()
+        {
+            return Ok(_doctorRepo.GetDoctorsWithSpec());
+        }
     }
 }

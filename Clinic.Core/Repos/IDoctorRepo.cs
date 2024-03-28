@@ -12,6 +12,7 @@ namespace Clinic.Core.Repos
     public interface IDoctorRepo
     {
         public int GetDoctorsCount(string Location = "", int specialityID = -1, string email = "");
+        public List<SingleDoctor> GetDoctorsWithSpec();
         public List<Doctor> GetAllDoctors(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
         public List<SingleDoctorDetails> GetAllDoctorsDetails(int pageNumber = 1,int pageSize = 10 ,string Location = "" , int specialityID = -1 , string email = "");
         public Doctor GetDoctor(int id);
