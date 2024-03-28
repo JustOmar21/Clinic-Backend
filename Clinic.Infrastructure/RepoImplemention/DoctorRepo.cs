@@ -57,7 +57,17 @@ namespace Clinic.Infrastructure.RepoImplemention
             Doctor? findDoc = context.Doctors.Find(doctor.Id);
             if (findDoc != null)
             {
-                context.Doctors.Update(findDoc);
+                findDoc.Address = doctor.Address;
+                findDoc.AppointmentPrice = doctor.AppointmentPrice;
+                findDoc.Status = doctor.Status;
+                findDoc.Email = doctor.Email;
+                findDoc.DOB = doctor.DOB;
+                findDoc.Name = doctor.Name;
+                findDoc.NationalID = doctor.NationalID;
+                findDoc.Phone = doctor.Phone;
+                findDoc.Governance = doctor.Governance;
+                findDoc.SpecialityID = doctor.SpecialityID;
+                findDoc.Gender = doctor.Gender;
                 context.SaveChanges();
             }
             else
@@ -266,7 +276,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             Schedule? checkSchedule = context.Schedule.SingleOrDefault(sch=>sch.Id == schedule.Id);
             if (checkSchedule != null)
             {
-                context.Schedule.Update(schedule);
+                checkSchedule.Thursday = schedule.Thursday;
+                checkSchedule.Friday = schedule.Friday;
+                checkSchedule.Saturday = schedule.Saturday;
+                checkSchedule.Sunday = schedule.Sunday;
+                checkSchedule.Monday = schedule.Monday;
+                checkSchedule.Tuesday = schedule.Tuesday;
+                checkSchedule.Wednesday = schedule.Wednesday;
+                checkSchedule.DoctorID = schedule.DoctorID;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
@@ -293,7 +310,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             Speciality checkSpec = context.Speciality.SingleOrDefault(spec => spec.ID == speciality.ID) ?? throw new KeyNotFoundException($"Speciality with ID {speciality.ID} doesn't exist");
             if (checkSpec != null)
             {
-                context.Speciality.Update(speciality);
+                checkSpec.Name = speciality.Name;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }

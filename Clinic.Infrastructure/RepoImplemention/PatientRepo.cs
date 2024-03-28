@@ -128,7 +128,10 @@ namespace Clinic.Infrastructure.RepoImplemention
             var cardCheck = context.Paycard.SingleOrDefault(crd => crd.Id == card.Id);
             if (cardCheck != null)
             {
-                context.Paycard.Update(card);
+                cardCheck.CCV = card.CCV;
+                cardCheck.PatientID = card.PatientID;
+                cardCheck.ExpirationDate = card.ExpirationDate;
+                cardCheck.Number = card.Number;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
@@ -144,7 +147,12 @@ namespace Clinic.Infrastructure.RepoImplemention
             var checkPatient = context.Patients.SingleOrDefault(pat => pat.Id == patient.Id);
             if (checkPatient != null)
             {
-                context.Patients.Update(patient);
+                checkPatient.Name = patient.Name;
+                checkPatient.Status = patient.Status;
+                checkPatient.Email = patient.Email;
+                checkPatient.Phone = patient.Phone;
+                checkPatient.DOB = patient.DOB;
+                checkPatient.Gender = patient.Gender;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
@@ -156,7 +164,10 @@ namespace Clinic.Infrastructure.RepoImplemention
             var checkReview = context.Reviews.SingleOrDefault(rev => rev.Id == review.Id);
             if (checkReview != null)
             {
-                context.Reviews.Update(review);
+                checkReview.Notes = review.Notes;
+                checkReview.Score = review.Score;
+                checkReview.PatientID = review.PatientID;
+                checkReview.DoctorID = review.DoctorID;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
