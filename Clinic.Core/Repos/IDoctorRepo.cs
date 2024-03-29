@@ -36,5 +36,8 @@ namespace Clinic.Core.Repos
         public HttpStatusCode EditSchedule(Schedule schedule);
         public Schedule GetSchedule(int scheduleID);
         public int GetCurrentOrder(DateTime date);
+        public List<SinglePatientAppointment> GetAllRequestedAppointments(int doctorID , DateTime? date);
+        public List<SinglePatientAppointment> GetAllOtherAppointments(int DoctorID, DateTime? date);
+        public List<SinglePatientAppointment> GetAllAcceptedAppointments(int DoctorID, DateTime? date);
     }
 }

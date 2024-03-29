@@ -356,5 +356,84 @@ namespace Clinic.Infrastructure.RepoImplemention
             }
             return singleDoctors;
         }
+        public List<SinglePatientAppointment> GetAllRequestedAppointments(int DoctorID, DateTime? date)
+        {
+            Doctor? findDoc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            List<Appointement> apps;
+            List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
+            if (date != null)
+            {
+                apps = context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status == AppStatus.Pending)
+                    .ToList();
+            }
+            else
+            {
+                apps = context.Appointements
+                    .Where(app => app.DoctorID == DoctorID && app.Status == AppStatus.Pending)
+                    .ToList();
+            }
+            foreach (Appointement app in apps)
+            {
+                SinglePatientAppointment singleApp = new SinglePatientAppointment();
+                singleApp.Patient = context.Patients.SingleOrDefault(pat => pat.Id == app.PatientID);
+                singleApp.Appointement = app;
+                patientApps.Add(singleApp);
+            }
+            return patientApps;
+        }
+        public List<SinglePatientAppointment> GetAllOtherAppointments(int DoctorID, DateTime? date)
+        {
+            Doctor? findDoc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            List<Appointement> apps;
+            List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
+            if (date != null)
+            {
+                apps = context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status != AppStatus.Pending)
+                    .ToList();
+            }
+            else
+            {
+                apps = context.Appointements
+                    .Where(app => app.DoctorID == DoctorID && app.Status != AppStatus.Pending)
+                    .ToList();
+            }
+            foreach (Appointement app in apps)
+            {
+                SinglePatientAppointment singleApp = new SinglePatientAppointment();
+                singleApp.Patient = context.Patients.SingleOrDefault(pat => pat.Id == app.PatientID);
+                singleApp.Appointement = app;
+                patientApps.Add(singleApp);
+            }
+            return patientApps;
+        }
+
+        public List<SinglePatientAppointment> GetAllAcceptedAppointments(int DoctorID, DateTime? date)
+        {
+            Doctor? findDoc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            List<Appointement> apps;
+            List<SinglePatientAppointment> patientApps = new List<SinglePatientAppointment>();
+            if (date != null)
+            {
+                apps = context.Appointements
+                    .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status == AppStatus.Accepted)
+                    .ToList();
+            }
+            else
+            {
+                apps = context.Appointements
+                    .Where(app => app.DoctorID == DoctorID && app.Status == AppStatus.Accepted)
+                    .ToList();
+            }
+            foreach (Appointement app in apps)
+            {
+                SinglePatientAppointment singleApp = new SinglePatientAppointment();
+                singleApp.Patient = context.Patients.SingleOrDefault(pat => pat.Id == app.PatientID);
+                singleApp.Appointement = app;
+                patientApps.Add(singleApp);
+            }
+            return patientApps;
+        }
     }
 }

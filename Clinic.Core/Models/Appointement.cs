@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
 {
-    public enum AppStatus { Accepted , Rejected , Cancaled };
+    public enum AppStatus { Accepted , Rejected , Cancaled , Pending };
     public class Appointement
     {
         public int Id { get; set; }

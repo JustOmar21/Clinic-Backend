@@ -175,5 +175,27 @@ namespace Clinic.API.Controllers
         {
             return Ok(_doctorRepo.GetDoctorsWithSpec());
         }
+
+        [HttpGet("Appointment/Requested/doctor={DoctorID:int}")]
+        [HttpGet("Appointment/Requested/doctor={DoctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllRequestedAppointments(int DoctorID, DateTime? date)
+        {
+            if (date is not null) date = date.Value.Date;
+            return Ok(_doctorRepo.GetAllRequestedAppointments(DoctorID, date));
+        }
+        [HttpGet("Appointment/Others/doctor={DoctorID:int}")]
+        [HttpGet("Appointment/Others/doctor={DoctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllOtherAppointments(int DoctorID, DateTime? date)
+        {
+            if (date is not null) date = date.Value.Date;
+            return Ok(_doctorRepo.GetAllOtherAppointments(DoctorID, date));
+        }
+        [HttpGet("Appointment/Accepted/doctor={DoctorID:int}")]
+        [HttpGet("Appointment/Accepted/doctor={DoctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllAcceptedAppointments(int DoctorID, DateTime? date)
+        {
+            if (date is not null) date = date.Value.Date;
+            return Ok(_doctorRepo.GetAllAcceptedAppointments(DoctorID, date));
+        }
     }
 }
