@@ -176,26 +176,26 @@ namespace Clinic.API.Controllers
             return Ok(_doctorRepo.GetDoctorsWithSpec());
         }
 
-        [HttpGet("Appointment/Requested/doctor={DoctorID:int}")]
-        [HttpGet("Appointment/Requested/doctor={DoctorID:int}&date={date:datetime}")]
-        public IActionResult GetAllRequestedAppointments(int DoctorID, DateTime? date)
+        [HttpGet("Appointment/Requested/doctor={doctorID:int}")]
+        [HttpGet("Appointment/Requested/doctor={doctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllRequestedAppointments(int doctorID, DateTime? date)
         {
             if (date is not null) date = date.Value.Date;
-            return Ok(_doctorRepo.GetAllRequestedAppointments(DoctorID, date));
+            return Ok(_doctorRepo.GetAllRequestedAppointments(doctorID, date));
         }
-        [HttpGet("Appointment/Others/doctor={DoctorID:int}")]
-        [HttpGet("Appointment/Others/doctor={DoctorID:int}&date={date:datetime}")]
-        public IActionResult GetAllOtherAppointments(int DoctorID, DateTime? date)
+        [HttpGet("Appointment/Others/doctor={doctorID:int}")]
+        [HttpGet("Appointment/Others/doctor={doctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllOtherAppointments(int doctorID, DateTime? date)
         {
             if (date is not null) date = date.Value.Date;
-            return Ok(_doctorRepo.GetAllOtherAppointments(DoctorID, date));
+            return Ok(_doctorRepo.GetAllOtherAppointments(doctorID, date));
         }
-        [HttpGet("Appointment/Accepted/doctor={DoctorID:int}")]
-        [HttpGet("Appointment/Accepted/doctor={DoctorID:int}&date={date:datetime}")]
-        public IActionResult GetAllAcceptedAppointments(int DoctorID, DateTime? date)
+        [HttpGet("Appointment/Accepted/doctor={doctorID:int}")]
+        [HttpGet("Appointment/Accepted/doctor={doctorID:int}&date={date:datetime}")]
+        public IActionResult GetAllAcceptedAppointments(int doctorID, DateTime? date)
         {
             if (date is not null) date = date.Value.Date;
-            return Ok(_doctorRepo.GetAllAcceptedAppointments(DoctorID, date));
+            return Ok(_doctorRepo.GetAllAcceptedAppointments(doctorID, date));
         }
     }
 }

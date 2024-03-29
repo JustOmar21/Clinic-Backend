@@ -136,5 +136,10 @@ namespace Clinic.API.Controllers
         {
             return Ok(_patientRepo.GetAllPatientNoPage());
         }
+        [HttpGet("AppointmentDocs/{patientID:int}")]
+        public IActionResult GetAppsWithDoc(int patientID)
+        {
+            return Ok(_patientRepo.GetAllApps(patientID));
+        }
     }
 }

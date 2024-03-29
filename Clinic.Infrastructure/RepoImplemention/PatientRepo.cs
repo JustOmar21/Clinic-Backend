@@ -264,5 +264,19 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             return context.Patients.ToList();
         }
+        public List<AppWithDoc> GetAllApps(int patientID)
+        {
+            var findPat = context.Patients.SingleOrDefault(pat => pat.Id == patientID) ?? throw new KeyNotFoundException($"Patient with ID {patientID} does not exist");
+            var apps = context.Appointements.Where(app=> app.PatientID==patientID).OrderByDescending(app=> app.Date).ToList();
+            List<AppWithDoc> docs = new List<AppWithDoc>();
+            foreach(var app in apps)
+            {
+                AppWithDoc appWithDoc = new AppWithDoc();
+                appWithDoc.Appointement = app;
+                appWithDoc.Doctor = context.Doctors.SingleOrDefault(appss=>appss.Id == app.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {app.DoctorID} does not exist");
+                docs.Add(appWithDoc);
+            }
+            return docs;
+        }
     }
 }

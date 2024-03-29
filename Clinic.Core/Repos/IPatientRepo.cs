@@ -32,6 +32,7 @@ namespace Clinic.Core.Repos
         public HttpStatusCode EditReview(Review review);
         public HttpStatusCode DeleteReview(int reviewID);
         public Review? GetReview(int reviewID);
+        public List<AppWithDoc> GetAllApps(int patientID);
 
     }
 }

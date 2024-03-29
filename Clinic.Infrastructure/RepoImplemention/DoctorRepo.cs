@@ -241,6 +241,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             List<Appointement> app = context.Appointements.Where(app=>app.DoctorID==DoctorID&&app.PatientID==PatientID)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
+                .OrderByDescending(app=>app.Date)
                 .ToList();
             PatientAppointments patientApps = new PatientAppointments
             {
@@ -365,12 +366,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 apps = context.Appointements
                     .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status == AppStatus.Pending)
+                    .OrderByDescending(app => app.Date)
                     .ToList();
             }
             else
             {
                 apps = context.Appointements
                     .Where(app => app.DoctorID == DoctorID && app.Status == AppStatus.Pending)
+                    .OrderByDescending(app => app.Date)
                     .ToList();
             }
             foreach (Appointement app in apps)
@@ -391,12 +394,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 apps = context.Appointements
                     .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status != AppStatus.Pending)
+                    .OrderByDescending(app => app.Date)
                     .ToList();
             }
             else
             {
                 apps = context.Appointements
                     .Where(app => app.DoctorID == DoctorID && app.Status != AppStatus.Pending)
+                    .OrderByDescending(app => app.Date)
                     .ToList();
             }
             foreach (Appointement app in apps)
@@ -418,12 +423,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 apps = context.Appointements
                     .Where(app => app.Date.Date == date.Value.Date && app.DoctorID == DoctorID && app.Status == AppStatus.Accepted)
+                    .OrderByDescending(app=>app.Date)
                     .ToList();
             }
             else
             {
                 apps = context.Appointements
                     .Where(app => app.DoctorID == DoctorID && app.Status == AppStatus.Accepted)
+                    .OrderByDescending(app => app.Date)
                     .ToList();
             }
             foreach (Appointement app in apps)
