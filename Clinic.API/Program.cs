@@ -30,6 +30,7 @@ namespace Clinic.API
             builder.Services.AddTransient<IDoctorRepo, DoctorRepo>();
             builder.Services.AddTransient<IPatientRepo, PatientRepo>();
             builder.Services.AddTransient<IAdminRepo, AdminRepo>();
+            builder.Services.AddTransient<IUserRepo, UserRepo>();
             builder.Services.AddDbContext<ClinicDBContext>(opt =>
             {
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("connect"));
