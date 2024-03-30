@@ -19,7 +19,7 @@ namespace Clinic.Core.Repos
         public int GetAppointementsCount(int DoctorID, int PatientID);
         public int GetAllAppointementsCount(int PatientID, DateTime? date = null);
         public List<Appointement>? GetAllAppointements(int PatientID, DateTime? date = null, int pageNumber = 1, int pageSize = 10);
-        public HttpStatusCode AddPatient(Patient patient);
+        public HttpStatusCode AddPatient(AddPatient patient);
         public HttpStatusCode EditPatient(Patient patient);
         public HttpStatusCode DeletePatient(int id);
         public HttpStatusCode AddAppointment(Appointement app);

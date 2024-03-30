@@ -21,7 +21,7 @@ namespace Clinic.Core.Repos
         public int GetAllAppointementsCount(int DoctorID, DateTime? date = null);
         public PatientAppointments GetPatientAppointements(int DoctorID, int PatientID, int pageNumber = 1, int pageSize = 10);
         public int GetPatientAppointementsCount(int DoctorID, int PatientID);
-        public HttpStatusCode AddDoctor(Doctor doctor);
+        public HttpStatusCode AddDoctor(AddDoctor doctor);
         public HttpStatusCode EditDoctor(Doctor doctor);
         public HttpStatusCode DeleteDoctor(int id);
         public HttpStatusCode ConfirmAppointment(int AppID);

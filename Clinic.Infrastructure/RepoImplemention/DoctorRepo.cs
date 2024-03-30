@@ -22,12 +22,13 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             this.context = context;
         }
-        public HttpStatusCode AddDoctor(Doctor doctor)
+        public HttpStatusCode AddDoctor(AddDoctor doctorDTO)
         {
 
-            if(doctor != null)
+            if(doctorDTO.doctor != null)
             {
-                context.Doctors.Add(doctor);
+                context.Logins.Add(new Login { username = doctorDTO.doctor.Email, password = doctorDTO.password, type = "doctor" });
+                context.Doctors.Add(doctorDTO.doctor);
                 context.SaveChanges();
             }
             else
@@ -42,7 +43,9 @@ namespace Clinic.Infrastructure.RepoImplemention
             Doctor? findDoc = context.Doctors.Find(id);
             if(findDoc != null)
             {
+                var log = context.Logins.SingleOrDefault(log => log.username == findDoc.Email);
                 context.Doctors.Remove(findDoc);
+                context.Logins.Remove(log);
                 context.SaveChanges();
             }
             else
@@ -57,10 +60,12 @@ namespace Clinic.Infrastructure.RepoImplemention
             Doctor? findDoc = context.Doctors.Find(doctor.Id);
             if (findDoc != null)
             {
+                var log = context.Logins.SingleOrDefault(log => log.username == findDoc.Email);
                 findDoc.Address = doctor.Address;
                 findDoc.AppointmentPrice = doctor.AppointmentPrice;
                 findDoc.Status = doctor.Status;
                 findDoc.Email = doctor.Email;
+                log.username = doctor.Email;
                 findDoc.DOB = doctor.DOB;
                 findDoc.Name = doctor.Name;
                 findDoc.NationalID = doctor.NationalID;

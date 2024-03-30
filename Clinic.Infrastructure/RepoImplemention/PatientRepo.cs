@@ -63,11 +63,12 @@ namespace Clinic.Infrastructure.RepoImplemention
         }
 
 
-        public HttpStatusCode AddPatient(Patient patient)
+        public HttpStatusCode AddPatient(AddPatient patientDTO)
         {
-            if(patient != null)
+            if(patientDTO.patient != null)
             {
-                context.Patients.Add(patient);
+                context.Logins.Add(new Login { username = patientDTO.patient.Email, password = patientDTO.password, type = "patient" });
+                context.Patients.Add(patientDTO.patient);
                 context.SaveChanges();
                 return HttpStatusCode.Created;
             }
@@ -104,7 +105,9 @@ namespace Clinic.Infrastructure.RepoImplemention
             Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == id);
             if(patient != null)
             {
+                var log = context.Logins.SingleOrDefault(log => log.username == patient.Email);
                 context.Patients.Remove(patient);
+                context.Logins.Remove(log);
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
@@ -147,9 +150,11 @@ namespace Clinic.Infrastructure.RepoImplemention
             var checkPatient = context.Patients.SingleOrDefault(pat => pat.Id == patient.Id);
             if (checkPatient != null)
             {
+                var log = context.Logins.SingleOrDefault(log => log.username == patient.Email);
                 checkPatient.Name = patient.Name;
                 checkPatient.Status = patient.Status;
                 checkPatient.Email = patient.Email;
+                log.username = patient.Email;
                 checkPatient.Phone = patient.Phone;
                 checkPatient.DOB = patient.DOB;
                 checkPatient.Gender = patient.Gender;
