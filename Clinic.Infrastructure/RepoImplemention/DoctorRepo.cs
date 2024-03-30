@@ -29,6 +29,18 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 context.Logins.Add(new Login { username = doctorDTO.doctor.Email, password = doctorDTO.password, type = "doctor" });
                 context.Doctors.Add(doctorDTO.doctor);
+                Schedule schedule = new Schedule
+                {
+                    DoctorID = doctorDTO.doctor.Id,
+                    Saturday = "0",
+                    Sunday = "0",
+                    Monday = "0",
+                    Tuesday = "0",
+                    Wednesday = "0",
+                    Thursday = "0",
+                    Friday = "0"
+                };
+                context.Schedule.Add(schedule);
                 context.SaveChanges();
             }
             else
