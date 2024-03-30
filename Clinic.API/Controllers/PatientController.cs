@@ -1,4 +1,5 @@
-﻿using Clinic.Core.Models;
+﻿using Clinic.Core.DTO;
+using Clinic.Core.Models;
 using Clinic.Core.Repos;
 using Clinic.Infrastructure.Filters;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,7 @@ namespace Clinic.API.Controllers
             _patientRepo = patientRepo;
         }
         [HttpPost("Create")]
-        public IActionResult Add(Patient pat)
+        public IActionResult Add(AddPatient pat)
         {
             return StatusCode((int)_patientRepo.AddPatient(pat));
         }

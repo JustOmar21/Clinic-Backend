@@ -1,4 +1,5 @@
-﻿using Clinic.Core.Models;
+﻿using Clinic.Core.DTO;
+using Clinic.Core.Models;
 using Clinic.Core.Repos;
 using Clinic.Infrastructure.Filters;
 using Clinic.Infrastructure.RepoImplemention;
@@ -18,7 +19,7 @@ namespace Clinic.API.Controllers
             _doctorRepo = doctorRepo;
         }
         [HttpPost("Create")]
-        public IActionResult Add(Doctor doc)
+        public IActionResult Add(AddDoctor doc)
         {
             return StatusCode((int)_doctorRepo.AddDoctor(doc));
         }
