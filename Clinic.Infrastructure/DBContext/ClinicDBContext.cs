@@ -19,6 +19,7 @@ namespace Clinic.Infrastructure.DBContext
         public DbSet<Speciality> Speciality { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Login> Logins { get; set; }
         public DbSet<Paycard> Paycard { get; set; }
         public DbSet<confirmEmail> ConfirmEmail { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,6 +31,10 @@ namespace Clinic.Infrastructure.DBContext
             modelBuilder.Entity<Appointement>().HasIndex(app => new { app.PatientID, app.DoctorID, app.Date }).IsUnique();
             modelBuilder.Entity<Paycard>().HasIndex(app => app.PatientID).IsUnique();
             modelBuilder.Entity<Schedule>().HasIndex(scd => scd.DoctorID).IsUnique();
+            modelBuilder.Entity<Login>().HasIndex(log=>log.username).IsUnique();
+            modelBuilder.Entity<Login>().HasData(
+                new Login() { Id = 1001 , username="admin@gmail.com" , password="123456789sS" , type = "admin" }
+            );
         }
     }
 }

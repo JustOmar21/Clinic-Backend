@@ -4,6 +4,7 @@ using Clinic.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicDBContext))]
-    partial class ClinicDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240329224447_addLogin")]
+    partial class addLogin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,15 +147,6 @@ namespace Clinic.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Logins");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1001,
-                            password = "123456789sS",
-                            type = "admin",
-                            username = "admin@gmail.com"
-                        });
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Patient", b =>
