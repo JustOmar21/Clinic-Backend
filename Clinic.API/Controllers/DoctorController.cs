@@ -125,10 +125,10 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_doctorRepo.ConfirmAppointment(appID));
         }
-        [HttpGet("Schedule/{scheduleID:int}")]
-        public IActionResult GetSchedule(int scheduleID)
+        [HttpGet("Schedule/{docID:int}")]
+        public IActionResult GetSchedule(int docID)
         {
-            return Ok(_doctorRepo.GetSchedule(scheduleID));
+            return Ok(_doctorRepo.GetSchedule(docID));
         }
         [HttpPost("Schedule/Add")]
         public IActionResult AddSchedule(Schedule schedule)

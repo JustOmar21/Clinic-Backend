@@ -90,7 +90,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 if (findApp.Status == AppStatus.Cancaled) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Cancaled;
                 context.SaveChanges();
-                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
+                //EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 if (findApp.Status == AppStatus.Accepted) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Accepted;
                 context.SaveChanges();
-                EmailUtilities.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\nWe would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
+                //EmailUtilities.SendEmail("Appointment Confirmed", $"Dear {findApp.Patient.Name}\nWe would like to inform you that Dr.{findApp.Doctor.Name} confirmed the appointment scheduled on {findApp.Date.ToLongDateString()}");
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 if (findApp.Status == AppStatus.Rejected) return HttpStatusCode.NoContent;
                 findApp.Status = AppStatus.Rejected;
                 context.SaveChanges();
-                EmailUtilities.SendEmail("Appointment Rejected", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
+                //EmailUtilities.SendEmail("Appointment Rejected", $"Dear {findApp.Patient.Name}\nWe regret to inform you that Dr.{findApp.Doctor.Name} rejected the appointment scheduled on {findApp.Date.ToLongDateString()}\nPlease retry booking again if needed");
             }
             else
             {
@@ -295,9 +295,9 @@ namespace Clinic.Infrastructure.RepoImplemention
             }
             else return HttpStatusCode.NotFound;
         }
-        public Schedule GetSchedule(int scheduleID)
+        public Schedule GetSchedule(int docID)
         {
-            return context.Schedule.SingleOrDefault(scd => scd.Id == scheduleID) ?? throw new KeyNotFoundException($"Schedule with ID {scheduleID} doesn't exist");
+            return context.Schedule.SingleOrDefault(scd => scd.DoctorID == docID) ?? throw new KeyNotFoundException($"This Doctor with ID {docID} does not have a schedule");
         }
         public HttpStatusCode AddSpeciality(Speciality speciality)
         {
