@@ -28,7 +28,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             context.Appointements.Add(app);
             context.SaveChanges();
             string gender = patient.Gender == Gender.PreferNotToSay ? "" : (patient.Gender == Gender.Male ? "Mr." : "Mrs.");
-            EmailUtilities.SendEmail("Appointment Requested", $"Dear {doc.Name}\nWe would like to inform you that {gender}{patient.Name} requested an appointment to be scheduled on {app.Date.Date.ToLongDateString()}\nPlease provide a response at <put link or mention appointment page>");
+            //EmailUtilities.SendEmail("Appointment Requested", $"Dear {doc.Name}\nWe would like to inform you that {gender}{patient.Name} requested an appointment to be scheduled on {app.Date.Date.ToLongDateString()}\nPlease provide a response at <put link or mention appointment page>");
             return HttpStatusCode.Created;
         }
         public HttpStatusCode CancelAppointment(int AppID)
@@ -40,7 +40,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 string gender = findApp.Patient.Gender == Gender.PreferNotToSay ? "" : (findApp.Patient.Gender == Gender.Male ? "Mr." : "Mrs.");
                 findApp.Status = AppStatus.Cancaled;
                 context.SaveChanges();
-                EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Doctor.Name}\nWe regret to inform you that {gender}{findApp.Patient.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}.");
+                //EmailUtilities.SendEmail("Appointment Canceled", $"Dear {findApp.Doctor.Name}\nWe regret to inform you that {gender}{findApp.Patient.Name} cancaled the appointment scheduled on {findApp.Date.ToLongDateString()}.");
                 return HttpStatusCode.NoContent;
             }
             else
