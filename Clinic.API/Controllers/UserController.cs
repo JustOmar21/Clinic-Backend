@@ -21,5 +21,10 @@ namespace Clinic.API.Controllers
         {
             return Ok(_UserRepo.Login(log));
         }
+        [HttpPatch("changepassword")]
+        public IActionResult changePassword(ChangePassword change)
+        {
+            return StatusCode((int)_UserRepo.changePassword(change));
+        }
     }
 }

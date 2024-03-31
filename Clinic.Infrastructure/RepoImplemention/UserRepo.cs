@@ -5,6 +5,7 @@ using Clinic.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,27 @@ namespace Clinic.Infrastructure.RepoImplemention
                 return new UserInfo() { id = null, role = "admin" }; ;
             }
             throw new KeyNotFoundException($"The user type '{checkLogin.type}' doesn't exist");
+        }
+        public HttpStatusCode changePassword(ChangePassword changePassword)
+        {
+            string userEmail;
+            if(changePassword.userRole == "patient")
+            {
+                userEmail = context.Patients.Where(pat => pat.Id == changePassword.userID).Select(pat=>pat.Email).SingleOrDefault() ?? throw new KeyNotFoundException($"Patient with ID {changePassword.userID} doesn't exist");
+                var loginData = context.Logins.SingleOrDefault(log => log.username == userEmail && log.password == changePassword.password) ?? throw new KeyNotFoundException("The password entered is incorrect");
+                loginData.password = changePassword.newPassword;
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else if (changePassword.userRole == "doctor")
+            {
+                userEmail = context.Doctors.Where(doc => doc.Id == changePassword.userID).Select(doc => doc.Email).SingleOrDefault() ?? throw new KeyNotFoundException($"Patient with ID {changePassword.userID} doesn't exist");
+                var loginData = context.Logins.SingleOrDefault(log => log.username == userEmail && log.password == changePassword.password) ?? throw new KeyNotFoundException("The password entered is incorrect");
+                loginData.password = changePassword.newPassword;
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            throw new KeyNotFoundException($"The type '{changePassword.userRole}' doesn't exist");
         }
     }
 }
