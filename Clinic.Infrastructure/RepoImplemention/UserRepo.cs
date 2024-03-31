@@ -41,6 +41,7 @@ namespace Clinic.Infrastructure.RepoImplemention
         public HttpStatusCode changePassword(ChangePassword changePassword)
         {
             string userEmail;
+            if (changePassword.password == changePassword.newPassword) throw new Exception("New Password cannot be the same as old password");
             if(changePassword.userRole == "patient")
             {
                 userEmail = context.Patients.Where(pat => pat.Id == changePassword.userID).Select(pat=>pat.Email).SingleOrDefault() ?? throw new KeyNotFoundException($"Patient with ID {changePassword.userID} doesn't exist");
