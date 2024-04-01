@@ -27,11 +27,13 @@ namespace Clinic.Infrastructure.RepoImplemention
 
             if(doctorDTO.doctor != null)
             {
+                var duplicateEmail = context.Logins.SingleOrDefault(x=> x.username == doctorDTO.doctor.Email);
+                if(duplicateEmail != null) { throw new Exception("The Email you entered is duplicated"); }
                 context.Logins.Add(new Login { username = doctorDTO.doctor.Email, password = doctorDTO.password, type = "doctor" });
                 context.Doctors.Add(doctorDTO.doctor);
                 Schedule schedule = new Schedule
                 {
-                    DoctorID = doctorDTO.doctor.Id,
+                    Doctor = doctorDTO.doctor,
                     Saturday = "0",
                     Sunday = "0",
                     Monday = "0",
@@ -70,8 +72,11 @@ namespace Clinic.Infrastructure.RepoImplemention
         public HttpStatusCode EditDoctor(Doctor doctor)
         {
             Doctor? findDoc = context.Doctors.Find(doctor.Id);
+            
             if (findDoc != null)
             {
+                var duplicateEmail = context.Logins.SingleOrDefault(x => x.username != findDoc.Email && x.username == doctor.Email);
+                if (duplicateEmail != null) { throw new Exception("The Email you entered is duplicated"); }
                 var log = context.Logins.SingleOrDefault(log => log.username == findDoc.Email);
                 findDoc.Address = doctor.Address;
                 findDoc.AppointmentPrice = doctor.AppointmentPrice;

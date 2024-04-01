@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,6 +68,8 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             if(patientDTO.patient != null)
             {
+                var duplicateEmail = context.Doctors.SingleOrDefault(x => x.Email == patientDTO.patient.Email);
+                if (duplicateEmail != null) { throw new Exception("The Email you entered is duplicated"); }
                 context.Logins.Add(new Login { username = patientDTO.patient.Email, password = patientDTO.password, type = "patient" });
                 context.Patients.Add(patientDTO.patient);
                 context.SaveChanges();
@@ -150,7 +153,9 @@ namespace Clinic.Infrastructure.RepoImplemention
             var checkPatient = context.Patients.SingleOrDefault(pat => pat.Id == patient.Id);
             if (checkPatient != null)
             {
-                var log = context.Logins.SingleOrDefault(log => log.username == patient.Email);
+                var duplicateEmail = context.Logins.SingleOrDefault(x => x.username != checkPatient.Email && x.username == patient.Email);
+                if (duplicateEmail != null) { throw new Exception("The Email you entered is duplicated"); }
+                var log = context.Logins.SingleOrDefault(log => log.username == checkPatient.Email);
                 checkPatient.Name = patient.Name;
                 checkPatient.Status = patient.Status;
                 checkPatient.Email = patient.Email;
