@@ -26,6 +26,8 @@ namespace Clinic.Infrastructure.RepoImplemention
         {
             Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == app.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {app.DoctorID} does not exist");
             Patient? patient = context.Patients.SingleOrDefault(pat=>pat.Id == app.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {app.PatientID} does not exist");
+            var findApp = context.Appointements.SingleOrDefault(apps=> apps.DoctorID == doc.Id && apps.PatientID == patient.Id && apps.Date == app.Date);
+            if (findApp != null) throw new Exception("You cannot book more than one appointment per day for the same doctor");
             context.Appointements.Add(app);
             context.SaveChanges();
             string gender = patient.Gender == Gender.PreferNotToSay ? "" : (patient.Gender == Gender.Male ? "Mr." : "Mrs.");
