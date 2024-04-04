@@ -198,5 +198,15 @@ namespace Clinic.API.Controllers
             if (date is not null) date = date.Value.Date;
             return Ok(_doctorRepo.GetAllAcceptedAppointments(doctorID, date));
         }
+        [HttpPost("Document/Add")]
+        public IActionResult AddDocument([FromForm]AddDocument document)
+        {
+            return StatusCode((int)_doctorRepo.AddDocument(document));
+        }
+        [HttpDelete("Document/Delete/{documentID}")]
+        public IActionResult DeleteDocument(int documentID)
+        {
+            return StatusCode((int)_doctorRepo.DeleteDocument(documentID));
+        }
     }
 }

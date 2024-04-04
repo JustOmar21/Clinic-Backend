@@ -26,5 +26,15 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_UserRepo.changePassword(change));
         }
+        [HttpPatch("changepfp")]
+        public IActionResult changePFP([FromForm]AddPic profilePic)
+        {
+            return StatusCode((int)_UserRepo.changeProfilePic(profilePic));
+        }
+        [HttpDelete("deletepfp")]
+        public IActionResult deletePFP(UserInfo user)
+        {
+            return StatusCode((int)_UserRepo.DeleteProfilePic(user));
+        }
     }
 }
