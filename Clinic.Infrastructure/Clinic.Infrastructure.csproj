@@ -24,5 +24,8 @@
     <ProjectReference Include="..\Clinic.Core\Clinic.Core.csproj" />
     <ProjectReference Include="..\Utilites\Utilites.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
 </Project>
