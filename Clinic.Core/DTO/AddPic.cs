@@ -1,4 +1,5 @@
 ﻿using Clinic.Core.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.DTO
 {
-    public class SingleDoctor
+    public class AddPic
     {
-        public Doctor? Doctor { get; set; }
-        public Speciality? Speciality { get; set; }
-        public double? ReviewAvg { get; set; }
+        public int id { get; set; }
+        public string role {  get; set; }
+        public IFormFile file { get; set; }
     }
 }

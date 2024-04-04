@@ -12,6 +12,7 @@ namespace Clinic.Core.DTO
         public Doctor? Doctor { get; set; }
         public Speciality? Speciality { get; set; }
         public Schedule? Schedule { get; set; }
+        public List<Documents>? Certificates { get; set; }
         public List<Review>? Reviews { get; set; }
     }
 }
