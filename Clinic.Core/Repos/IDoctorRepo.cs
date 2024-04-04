@@ -1,5 +1,6 @@
 ﻿using Clinic.Core.DTO;
 using Clinic.Core.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,5 +40,8 @@ namespace Clinic.Core.Repos
         public List<SinglePatientAppointment> GetAllRequestedAppointments(int doctorID , DateTime? date);
         public List<SinglePatientAppointment> GetAllOtherAppointments(int DoctorID, DateTime? date);
         public List<SinglePatientAppointment> GetAllAcceptedAppointments(int DoctorID, DateTime? date);
+        public HttpStatusCode AddDocument(AddDocument cert);
+        public HttpStatusCode DeleteDocument(int documentID);
+
     }
 }
