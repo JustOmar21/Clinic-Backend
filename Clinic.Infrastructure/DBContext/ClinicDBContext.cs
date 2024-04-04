@@ -22,6 +22,7 @@ namespace Clinic.Infrastructure.DBContext
         public DbSet<Login> Logins { get; set; }
         public DbSet<Paycard> Paycard { get; set; }
         public DbSet<confirmEmail> ConfirmEmail { get; set; }
+        public DbSet<Documents> Documents { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

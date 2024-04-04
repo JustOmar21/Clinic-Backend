@@ -4,6 +4,7 @@ using Clinic.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicDBContext))]
-    partial class ClinicDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240404031017_addCertandPicPath")]
+    partial class addCertandPicPath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,9 +82,6 @@ namespace Clinic.Infrastructure.Migrations
                     b.Property<DateTime>("DOB")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -122,31 +122,6 @@ namespace Clinic.Infrastructure.Migrations
                     b.HasIndex("SpecialityID");
 
                     b.ToTable("Doctors");
-                });
-
-            modelBuilder.Entity("Clinic.Core.Models.Documents", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DoctorID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DoctorID");
-
-                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Clinic.Core.Models.Login", b =>
@@ -400,17 +375,6 @@ namespace Clinic.Infrastructure.Migrations
                     b.Navigation("Speciality");
                 });
 
-            modelBuilder.Entity("Clinic.Core.Models.Documents", b =>
-                {
-                    b.HasOne("Clinic.Core.Models.Doctor", "Doctor")
-                        .WithMany("Documents")
-                        .HasForeignKey("DoctorID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
             modelBuilder.Entity("Clinic.Core.Models.Paycard", b =>
                 {
                     b.HasOne("Clinic.Core.Models.Patient", "Patient")
@@ -455,8 +419,6 @@ namespace Clinic.Infrastructure.Migrations
             modelBuilder.Entity("Clinic.Core.Models.Doctor", b =>
                 {
                     b.Navigation("Appointements");
-
-                    b.Navigation("Documents");
 
                     b.Navigation("Reviews");
                 });
