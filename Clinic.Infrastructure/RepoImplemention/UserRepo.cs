@@ -4,10 +4,12 @@ using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace Clinic.Infrastructure.RepoImplemention
@@ -59,6 +61,62 @@ namespace Clinic.Infrastructure.RepoImplemention
                 return HttpStatusCode.NoContent;
             }
             throw new KeyNotFoundException($"The type '{changePassword.userRole}' doesn't exist");
+        }
+
+        public HttpStatusCode changeProfilePic(AddPic change)
+        {
+            string extension = change.file.FileName.Split(".").Last();
+            extension = extension.ToLower();
+            string filename;
+            if (extension != "jpeg" && extension != "jpg" && extension != "png") throw new Exception("only jpeg, jpg and png files are allowed");
+            if(change.role == "doctor")
+            {
+                var doc = context.Doctors.SingleOrDefault(doc=>doc.Id == change.id) ?? throw new KeyNotFoundException($"Doctor with ID {change.id} doesn't exist");
+                filename = $"Doc{change.id}.{extension}";
+                doc.PicPath = $"wwwroot/profilePics/{filename}";
+            }
+            else if (change.role == "patient")
+            {
+                var pat = context.Patients.SingleOrDefault(pat => pat.Id == change.id) ?? throw new KeyNotFoundException($"Patient with ID {change.id} doesn't exist");
+                filename = $"Pat{change.id}.{extension}";
+                pat.PicPath = $"wwwroot/profilePics/{filename}";
+            }
+            else
+            { throw new KeyNotFoundException($"user type {change.role} doesn't exist"); }
+            using (FileStream FS = new FileStream($"wwwroot/profilePics/{filename}", FileMode.Create))
+            {
+                change.file.CopyTo(FS);
+            }
+            var files = new DirectoryInfo("wwwroot/profilePics").GetFiles().Where(di => di.Extension != $".{extension}" && di.Name.Split(".")[0] == filename.Split(".")[0]);
+            foreach (var file in files)
+            {
+                File.Delete(file.FullName);
+            }
+            context.SaveChanges();
+            return HttpStatusCode.OK;
+        }
+        public HttpStatusCode DeleteProfilePic(UserInfo user)
+        {
+            if(user.role == "doctor")
+            {
+                var doc = context.Doctors.SingleOrDefault(docs=>docs.Id == user.id) ?? throw new KeyNotFoundException($"Doctor with ID {user.id} doesn't exist");
+                if (doc.PicPath == null) throw new Exception("Picture Already Deleted");
+                File.Delete(doc.PicPath);
+                doc.PicPath = null;
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            else if(user.role == "patient")
+            {
+                var pat = context.Patients.SingleOrDefault(pats => pats.Id == user.id) ?? throw new KeyNotFoundException($"Patient with ID {user.id} doesn't exist");
+                if (pat.PicPath == null) throw new Exception("Picture Already Deleted");
+                File.Delete(pat.PicPath);
+                pat.PicPath = null;
+                context.SaveChanges();
+                return HttpStatusCode.NoContent;
+            }
+            throw new KeyNotFoundException($"user type {user.role} doesn't exist");
+
         }
     }
 }

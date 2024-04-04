@@ -2,6 +2,7 @@
 using Clinic.Core.Models;
 using Clinic.Core.Repos;
 using Clinic.Infrastructure.DBContext;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Numerics;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Utilites;
 
@@ -239,6 +241,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doctorDetails.Doctor.Id);
             doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
             doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
+            doctorDetails.Certificates = context.Documents.Where(docu=> docu.DoctorID == id && docu.Type == DocumentType.Certificate).ToList();
             return doctorDetails;
         }
         public Doctor GetDoctor(int id)
@@ -370,10 +373,13 @@ namespace Clinic.Infrastructure.RepoImplemention
             List<SingleDoctor> singleDoctors = new List<SingleDoctor>();
             foreach(Doctor doc in doctors)
             {
+                var Reviews = context.Reviews.Where(rev => rev.DoctorID == doc.Id).Count();
+                double ReviewAvg = Reviews > 0 ? context.Reviews.Where(rev => rev.DoctorID == doc.Id).Average(rev => rev.Score) : 0;
                 SingleDoctor docs = new SingleDoctor
                 {
                     Doctor = doc,
-                    Speciality = context.Speciality.SingleOrDefault(spec => spec.ID == doc.SpecialityID)
+                    Speciality = context.Speciality.SingleOrDefault(spec => spec.ID == doc.SpecialityID),
+                    ReviewAvg = ReviewAvg
                 };
                 singleDoctors.Add(docs);
             }
@@ -463,6 +469,53 @@ namespace Clinic.Infrastructure.RepoImplemention
                 patientApps.Add(singleApp);
             }
             return patientApps;
+        }
+        public HttpStatusCode AddDocument(AddDocument docu)
+        {
+            string extension = docu.Document.FileName.Split(".").Last();
+            extension = extension.ToLower();
+            if (extension != "jpeg" && extension != "jpg" && extension != "png") throw new Exception("only jpeg, jpg and png files are allowed");
+            var doc = context.Doctors.SingleOrDefault(doc => doc.Id == docu.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {docu.DoctorID} doesn't exist");
+            string filename;
+            var document = new Documents();
+            if(docu.DocType == DocumentType.Certificate)
+            {
+                var documentCount = context.Documents.Where(document=> document.DoctorID == doc.Id && document.Type == DocumentType.Certificate).Count();
+                var documentNextCount = context.Documents
+                    .Where(document => document.DoctorID == doc.Id && document.Type == DocumentType.Certificate)
+                    .OrderByDescending(document=> document.Id).Take(1).ToList();
+                if (documentCount > 10) throw new Exception("You cannot have over 10 Certificate");
+                filename = $"Doc{doc.Id}Certificate#{(documentNextCount.Count == 0 ? 0 : documentNextCount[0].Id) + 1}.{extension}";
+                document.Type = DocumentType.Certificate;
+            }
+            else if (docu.DocType == DocumentType.NationalID)
+            {
+                var documentCount = context.Documents.Where(document => document.DoctorID == doc.Id && document.Type == DocumentType.NationalID).Count();
+                if (documentCount > 1) throw new Exception("You cannot submit more than one National ID Picture");
+                filename = $"Doc{doc.Id}NationalID.{extension}";
+                document.Type = DocumentType.NationalID;
+            }
+            else
+            {
+                throw new KeyNotFoundException("The Document Type you sent is invalid");
+            }
+            document.DoctorID = docu.DoctorID;
+            document.Path = $"wwwroot/{(docu.DocType == DocumentType.Certificate ? "certificates" : "NIDPics")}/{filename}";
+            context.Documents.Add(document);
+            using (FileStream FS = new FileStream(document.Path, FileMode.Create))
+            {
+                docu.Document.CopyTo(FS);
+            }
+            context.SaveChanges();
+            return HttpStatusCode.OK;
+        }
+        public HttpStatusCode DeleteDocument(int documentID)
+        {
+            var document = context.Documents.FirstOrDefault(docu => docu.Id == documentID) ?? throw new KeyNotFoundException($"Document with ID {documentID} doesn't exist");
+            context.Documents.Remove(document);
+            File.Delete(document.Path);
+            context.SaveChanges();
+            return HttpStatusCode.OK;
         }
     }
 }
