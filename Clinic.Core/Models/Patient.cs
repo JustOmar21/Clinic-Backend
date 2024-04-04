@@ -15,6 +15,7 @@ namespace Clinic.Core.Models
         public string Phone { get; set; }
         public Gender Gender { get; set; }
         public DateTime DOB { get; set; }
+        public string? PicPath { get; set; }
         public Status Status { get; set; }
         [JsonIgnore]
         public virtual IEnumerable<Review>? Reviews { get; set; }

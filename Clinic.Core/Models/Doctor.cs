@@ -18,10 +18,12 @@ namespace Clinic.Core.Models
         public string Address { get; set; }
         public string NationalID { get; set; }
         public string Phone { get; set; }
+        public string? Description { get; set; }
         public Gender Gender {  get; set; }
         public DateTime DOB { get; set; }
         public int AppointmentPrice { get; set; }
         public Status Status { get; set; }
+        public string? PicPath { get; set; }
         public int? SpecialityID { get; set; }
         [JsonIgnore]
         public virtual Speciality? Speciality { get; set; }
@@ -29,6 +31,8 @@ namespace Clinic.Core.Models
         public virtual IEnumerable<Review>? Reviews { get; set; }
         [JsonIgnore]
         public virtual IEnumerable<Appointement>? Appointements { get; set; }
+        [JsonIgnore]
+        public virtual IEnumerable<Documents>? Documents { get; set; }
 
 
     }
