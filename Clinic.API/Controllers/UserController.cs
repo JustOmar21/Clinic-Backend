@@ -31,7 +31,7 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_UserRepo.changeProfilePic(profilePic));
         }
-        [HttpDelete("deletepfp")]
+        [HttpPatch("deletepfp")]
         public IActionResult deletePFP(UserInfo user)
         {
             return StatusCode((int)_UserRepo.DeleteProfilePic(user));
