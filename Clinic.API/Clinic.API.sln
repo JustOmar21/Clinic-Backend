@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clinic.Infrastructure", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Clinic.Services", "..\Clinic.Services\Clinic.Services.csproj", "{312D0927-ED01-4B0F-AF90-16259C1936A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilites", "..\Utilites\Utilites.csproj", "{D8146D0D-D638-48EC-91C8-A96F50472FC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utilites", "..\Utilites\Utilites.csproj", "{D8146D0D-D638-48EC-91C8-A96F50472FC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

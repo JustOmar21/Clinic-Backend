@@ -23,7 +23,7 @@ namespace Clinic.Core.Models
         public DateTime DOB { get; set; }
         public int AppointmentPrice { get; set; }
         public Status Status { get; set; }
-        public string? PicPath { get; set; }
+        public string? PicPath { get; set; } = "../../Frontend/ITIAngularproject/src/assets/profilepic/defaultDoc.png";
         public int? SpecialityID { get; set; }
         [JsonIgnore]
         public virtual Speciality? Speciality { get; set; }
