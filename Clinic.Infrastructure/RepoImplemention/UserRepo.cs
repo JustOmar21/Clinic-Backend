@@ -73,21 +73,21 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 var doc = context.Doctors.SingleOrDefault(doc=>doc.Id == change.id) ?? throw new KeyNotFoundException($"Doctor with ID {change.id} doesn't exist");
                 filename = $"Doc{change.id}.{extension}";
-                doc.PicPath = $"wwwroot/profilePics/{filename}";
+                doc.PicPath = $"../../Frontend/ITIAngularproject/src/assets/profilepic/{filename}";
             }
             else if (change.role == "patient")
             {
                 var pat = context.Patients.SingleOrDefault(pat => pat.Id == change.id) ?? throw new KeyNotFoundException($"Patient with ID {change.id} doesn't exist");
                 filename = $"Pat{change.id}.{extension}";
-                pat.PicPath = $"wwwroot/profilePics/{filename}";
+                pat.PicPath = $"../../Frontend/ITIAngularproject/src/assets/profilepic/{filename}";
             }
             else
             { throw new KeyNotFoundException($"user type {change.role} doesn't exist"); }
-            using (FileStream FS = new FileStream($"wwwroot/profilePics/{filename}", FileMode.Create))
+            using (FileStream FS = new FileStream($"../../Frontend/ITIAngularproject/src/assets/profilepic/{filename}", FileMode.Create))
             {
                 change.file.CopyTo(FS);
             }
-            var files = new DirectoryInfo("wwwroot/profilePics").GetFiles().Where(di => di.Extension != $".{extension}" && di.Name.Split(".")[0] == filename.Split(".")[0]);
+            var files = new DirectoryInfo($"../../Frontend/ITIAngularproject/src/assets/profilepic").GetFiles().Where(di => di.Extension != $".{extension}" && di.Name.Split(".")[0] == filename.Split(".")[0]);
             foreach (var file in files)
             {
                 File.Delete(file.FullName);
@@ -102,7 +102,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 var doc = context.Doctors.SingleOrDefault(docs=>docs.Id == user.id) ?? throw new KeyNotFoundException($"Doctor with ID {user.id} doesn't exist");
                 if (doc.PicPath == null) throw new Exception("Picture Already Deleted");
                 File.Delete(doc.PicPath);
-                doc.PicPath = null;
+                doc.PicPath = "../../Frontend/ITIAngularproject/src/assets/profilepic/defaultDoc.png";
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }

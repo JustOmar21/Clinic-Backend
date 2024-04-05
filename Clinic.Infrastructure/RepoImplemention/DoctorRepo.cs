@@ -365,7 +365,7 @@ namespace Clinic.Infrastructure.RepoImplemention
 
         public int GetCurrentOrder(DateTime date)
         {
-            return context.Appointements.Where(app=>app.Date.Date == date.Date).Count();
+            return context.Appointements.Where(app=>app.Date.Date == date.Date).Count() + 1;
         }
         public List<SingleDoctor> GetDoctorsWithSpec()
         {
@@ -485,7 +485,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                     .Where(document => document.DoctorID == doc.Id && document.Type == DocumentType.Certificate)
                     .OrderByDescending(document=> document.Id).Take(1).ToList();
                 if (documentCount > 10) throw new Exception("You cannot have over 10 Certificate");
-                filename = $"Doc{doc.Id}Certificate#{(documentNextCount.Count == 0 ? 0 : documentNextCount[0].Id) + 1}.{extension}";
+                filename = $"Doc{doc.Id}CertificateN{(documentNextCount.Count == 0 ? 0 : documentNextCount[0].Id) + 1}.{extension}";
                 document.Type = DocumentType.Certificate;
             }
             else if (docu.DocType == DocumentType.NationalID)
@@ -500,7 +500,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 throw new KeyNotFoundException("The Document Type you sent is invalid");
             }
             document.DoctorID = docu.DoctorID;
-            document.Path = $"wwwroot/{(docu.DocType == DocumentType.Certificate ? "certificates" : "NIDPics")}/{filename}";
+            document.Path = $"../../Frontend/ITIAngularproject/src/assets/{(docu.DocType == DocumentType.Certificate ? "certificates" : "nid")}/{filename}";
             context.Documents.Add(document);
             using (FileStream FS = new FileStream(document.Path, FileMode.Create))
             {
