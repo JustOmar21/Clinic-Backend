@@ -100,7 +100,7 @@ namespace Clinic.Infrastructure.RepoImplemention
             if(user.role == "doctor")
             {
                 var doc = context.Doctors.SingleOrDefault(docs=>docs.Id == user.id) ?? throw new KeyNotFoundException($"Doctor with ID {user.id} doesn't exist");
-                if (doc.PicPath == null) throw new Exception("Picture Already Deleted");
+                if (doc.PicPath == "../../Frontend/ITIAngularproject/src/assets/profilepic/defaultDoc.png") throw new Exception("Picture Already Deleted");
                 File.Delete(doc.PicPath);
                 doc.PicPath = "../../Frontend/ITIAngularproject/src/assets/profilepic/defaultDoc.png";
                 context.SaveChanges();
