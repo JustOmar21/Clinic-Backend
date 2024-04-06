@@ -12,6 +12,7 @@ namespace Clinic.Core.Models
         public int Id { get; set; }
         public string Notes { get; set; }
         public int Score { get; set; }
+        public DateTime? date { get; set; }
         public int DoctorID { get; set; }
         public int PatientID { get; set; }
         [JsonIgnore]

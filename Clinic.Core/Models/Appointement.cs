@@ -15,6 +15,7 @@ namespace Clinic.Core.Models
         public int Order { get; set; }
         public AppStatus Status { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string? Rejection {  get; set; }
         public int DoctorID { get; set; }
         public int PatientID { get; set; }
         [JsonIgnore]
