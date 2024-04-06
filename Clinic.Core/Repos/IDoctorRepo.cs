@@ -43,5 +43,7 @@ namespace Clinic.Core.Repos
         public HttpStatusCode AddDocument(AddDocument cert);
         public HttpStatusCode DeleteDocument(int documentID);
 
+        public AccountActiveDocs GetNIDCerts(int DoctorID);
+
     }
 }

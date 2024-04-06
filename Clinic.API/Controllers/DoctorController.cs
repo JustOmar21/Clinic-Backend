@@ -203,10 +203,15 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_doctorRepo.AddDocument(document));
         }
-        [HttpDelete("Document/Delete/{documentID}")]
+        [HttpDelete("Document/Delete/{documentID:int}")]
         public IActionResult DeleteDocument(int documentID)
         {
             return StatusCode((int)_doctorRepo.DeleteDocument(documentID));
+        }
+        [HttpGet("/Document/nid&cert/{docID:int}")]
+        public IActionResult GetNidCert(int docID)
+        {
+            return Ok(_doctorRepo.GetNIDCerts(docID));
         }
     }
 }

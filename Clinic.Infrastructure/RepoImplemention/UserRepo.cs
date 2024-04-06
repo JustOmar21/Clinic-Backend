@@ -27,12 +27,12 @@ namespace Clinic.Infrastructure.RepoImplemention
             if (checkLogin.type == "doctor")
             {
                 var doctor = context.Doctors.SingleOrDefault(user => user.Email == checkLogin.username) ?? throw new KeyNotFoundException("This user exist in the login tables but not in the doctors table");
-                return new UserInfo() { id = doctor.Id , role = "doctor"};
+                return new UserInfo() { id = doctor.Id , role = "doctor" , status = doctor.Status};
             }
             else if (checkLogin.type == "patient")
             {
                 var patient = context.Patients.SingleOrDefault(user => user.Email == checkLogin.username) ?? throw new KeyNotFoundException("This user exist in the login tables but not in the patient table");
-                return new UserInfo() { id = patient.Id, role = "patient" };
+                return new UserInfo() { id = patient.Id, role = "patient" , status = patient.Status };
             }
             else if (checkLogin.type == "admin")
             {

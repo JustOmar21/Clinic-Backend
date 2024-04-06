@@ -517,5 +517,17 @@ namespace Clinic.Infrastructure.RepoImplemention
             context.SaveChanges();
             return HttpStatusCode.OK;
         }
+        public AccountActiveDocs GetNIDCerts(int DoctorID)
+        {
+            Doctor? doc = context.Doctors.Find(DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {DoctorID} doesn't exist");
+            AccountActiveDocs docs = new AccountActiveDocs()
+            {
+                nid = context.Documents.SingleOrDefault(docs => docs.DoctorID == doc.Id && docs.Type == DocumentType.NationalID),
+                Certificates = context.Documents.Where(docs => docs.DoctorID == doc.Id && docs.Type == DocumentType.Certificate).ToList()
+            };
+            if(docs.Certificates.Count == 0) { docs.Certificates = null; }
+
+            return docs;
+        }
     }
 }
