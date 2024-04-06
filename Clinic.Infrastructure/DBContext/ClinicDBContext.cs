@@ -32,6 +32,7 @@ namespace Clinic.Infrastructure.DBContext
             modelBuilder.Entity<Appointement>().HasIndex(app => new { app.PatientID, app.DoctorID, app.Date }).IsUnique();
             modelBuilder.Entity<Paycard>().HasIndex(app => app.PatientID).IsUnique();
             modelBuilder.Entity<Schedule>().HasIndex(scd => scd.DoctorID).IsUnique();
+            modelBuilder.Entity<Review>().HasIndex(rev=> new {rev.DoctorID, rev.PatientID, rev.date}).IsUnique();
             modelBuilder.Entity<Login>().HasIndex(log=>log.username).IsUnique();
             modelBuilder.Entity<Login>().HasData(
                 new Login() { Id = 1001 , username="admin@gmail.com" , password="123456789sS" , type = "admin" }

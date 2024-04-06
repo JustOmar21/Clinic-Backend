@@ -4,6 +4,7 @@ using Clinic.Infrastructure.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Clinic.Infrastructure.Migrations
 {
     [DbContext(typeof(ClinicDBContext))]
-    partial class ClinicDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240406095731_modifiedReview")]
+    partial class modifiedReview
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +47,6 @@ namespace Clinic.Infrastructure.Migrations
 
                     b.Property<int>("PatientID")
                         .HasColumnType("int");
-
-                    b.Property<string>("Rejection")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -284,13 +284,14 @@ namespace Clinic.Infrastructure.Migrations
                     b.Property<DateTime?>("date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("rejection")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientID");
+                    b.HasIndex("DoctorID");
 
-                    b.HasIndex("DoctorID", "PatientID", "date")
-                        .IsUnique()
-                        .HasFilter("[date] IS NOT NULL");
+                    b.HasIndex("PatientID");
 
                     b.ToTable("Reviews");
                 });
