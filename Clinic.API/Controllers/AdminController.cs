@@ -26,6 +26,12 @@ namespace Clinic.API.Controllers
         {
             return StatusCode((int)_adminRepo.DeactivateAccount(account));
         }
+        [HttpPatch("Account/Reject")]
+        public IActionResult RejectAccount(AccountStatus account)
+        {
+            return StatusCode((int)_adminRepo.RejectAccount(account));
+        }
+
         [HttpPatch("Account/Banned")]
         public IActionResult BanAccount(AccountStatus account)
         {

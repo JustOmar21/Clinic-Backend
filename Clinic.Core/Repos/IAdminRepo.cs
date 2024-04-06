@@ -12,6 +12,7 @@ namespace Clinic.Core.Repos
     {
         public HttpStatusCode ActivateAccount(AccountStatus account);
         public HttpStatusCode DeactivateAccount(AccountStatus account);
+        public HttpStatusCode RejectAccount(AccountStatus account);
         public HttpStatusCode BanAccount(AccountStatus account);
         public HttpStatusCode ConfirmationRequest(AccountStatus account);
         public string GetKeypass(AccountStatus account);
