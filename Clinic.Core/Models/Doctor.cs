@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.Models
 {
-    public enum Status { Active , Inactive , Banned }
+    public enum Status { Active , Inactive , Banned , Rejected }
     public enum Gender { Male , Female , PreferNotToSay}
     public class Doctor
     {

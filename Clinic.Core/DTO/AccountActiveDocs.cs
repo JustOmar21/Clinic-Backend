@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Clinic.Core.DTO
 {
-    public class UserInfo
+    public class AccountActiveDocs
     {
-        public int? id { get; set; }
-        public string role { get; set; }
-        public Status? status { get; set; }
+        public Documents? nid { get; set; }
+        public List<Documents>? Certificates { get; set; }
     }
 }
