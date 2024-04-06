@@ -32,6 +32,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 var duplicateEmail = context.Logins.SingleOrDefault(x=> x.username == doctorDTO.doctor.Email);
                 if(duplicateEmail != null) { throw new Exception("The Email you entered is duplicated"); }
                 context.Logins.Add(new Login { username = doctorDTO.doctor.Email, password = doctorDTO.password, type = "doctor" });
+                doctorDTO.doctor.PicPath = "../../Frontend/ITIAngularproject/src/assets/profilepic/defaultDoc.png";
                 context.Doctors.Add(doctorDTO.doctor);
                 Schedule schedule = new Schedule
                 {
@@ -217,7 +218,14 @@ namespace Clinic.Infrastructure.RepoImplemention
                 doctorDetails.Doctor = doc;
                 doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doc.Id);
                 doctorDetails.Speciality = context.Speciality.SingleOrDefault(spy => spy.ID == doctorDetails.Doctor.SpecialityID);
-                doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == doc.Id).ToList();
+                var Reviews = context.Reviews.Where(rev => rev.DoctorID == doc.Id).ToList();
+                foreach(Review review in Reviews)
+                {
+                    PatientReview patient = new PatientReview();
+                    patient.Patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {review.PatientID} doesn't exist");
+                    patient.Review = review;
+                    doctorDetails.Reviews.Add(patient);
+                }
                 docsFullDetails.Add(doctorDetails);
             }
             return docsFullDetails;
@@ -240,7 +248,14 @@ namespace Clinic.Infrastructure.RepoImplemention
             doctorDetails.Doctor = context.Doctors.SingleOrDefault(doc => doc.Id == id) ?? throw new KeyNotFoundException($"Doctor with ID {id} doesn't exist");
             doctorDetails.Schedule = context.Schedule.SingleOrDefault(sch => sch.DoctorID == doctorDetails.Doctor.Id);
             doctorDetails.Speciality = context.Speciality.SingleOrDefault(doc => doc.ID == doctorDetails.Doctor.SpecialityID);
-            doctorDetails.Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
+            var Reviews = context.Reviews.Where(rev => rev.DoctorID == id).ToList();
+            foreach (Review review in Reviews)
+            {
+                PatientReview patient = new PatientReview();
+                patient.Patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {review.PatientID} doesn't exist");
+                patient.Review = review;
+                doctorDetails.Reviews.Add(patient);
+            }
             doctorDetails.Certificates = context.Documents.Where(docu=> docu.DoctorID == id && docu.Type == DocumentType.Certificate).ToList();
             return doctorDetails;
         }

@@ -86,6 +86,8 @@ namespace Clinic.Infrastructure.RepoImplemention
             {
                 Doctor? doc = context.Doctors.SingleOrDefault(doc => doc.Id == review.DoctorID) ?? throw new KeyNotFoundException($"Doctor with ID {review.DoctorID} does not exist");
                 Patient? patient = context.Patients.SingleOrDefault(pat => pat.Id == review.PatientID) ?? throw new KeyNotFoundException($"Patient with ID {review.PatientID} does not exist");
+                var rev = context.Reviews.SingleOrDefault(revs=>revs.PatientID == review.PatientID && revs.DoctorID == review.DoctorID && revs.date == review.date);
+                if (rev != null) { throw new Exception("You cannot add more than one review for each appointment"); }
                 context.Reviews.Add(review);
                 context.SaveChanges();
                 return HttpStatusCode.Created;
@@ -180,6 +182,7 @@ namespace Clinic.Infrastructure.RepoImplemention
                 checkReview.Score = review.Score;
                 checkReview.PatientID = review.PatientID;
                 checkReview.DoctorID = review.DoctorID;
+                checkReview.date = review.date;
                 context.SaveChanges();
                 return HttpStatusCode.NoContent;
             }
