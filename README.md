@@ -7,7 +7,6 @@ A medical website backend API developed using ASP.NET Core, designed to provide 
 - **User Management:** Role-based access control for Admins, Doctors, and Patients.
 - **Appointment Scheduling:** Patients can book, reschedule, or cancel appointments; doctors can manage their schedules.
 - **Medical Records:** Secure storage and retrieval of patient medical histories.
-- **Prescription Management:** Doctors can create and manage prescriptions; patients can view their prescribed medications.
 - **Notifications:** Email alerts for appointment reminders and important updates.
 
 ## Technologies Used
